@@ -4,18 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Podsetnik extends Model
+class FinansijskiCilj extends Model
 {
     protected $fillable = [
         'idKorisnik',
-        'opis',
-        'datum',
-        'status',
+        // 'naziv',//DAL DA DODAMO OVAJ ATRIBUT
+        'ciljaniIznos',
+        'trenutniIznos',
+        'rok',
     ];
 
     protected $casts = [
-        'datum'=>'datetime',
-        'status'=>'boolean',
+        'rok'=>'date',
+        'ciljaniIznos'=>'decimal:2',
+        'trenutniIznos'=>'decimal:2',
+
     ];
 
     public function korisnik()

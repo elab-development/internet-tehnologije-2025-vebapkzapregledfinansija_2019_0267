@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Enums\Uloga;
 
 class User extends Authenticatable
 {
@@ -19,9 +20,13 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'ime',
+        'prezime',
         'email',
         'password',
+        'uloga',
+        'poeni',
+        'nivo',
     ];
 
     /**
@@ -47,6 +52,34 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'uloga' => Uloga::class,
         ];
     }
+
+    public function podsetnici()
+    {
+        return $this->hasMany(Podsetnik::class,'idKorisnik');
+    }
+
+    public function budzeti()
+    {
+        return $this->hasMany(Budzet::class,'idKorisnik');
+    }
+
+    public function finansijskiCiljevi()
+    {
+        return $this->hasMany(FinansijskiCilj::class,'idKorisnik');
+    }
+
+    public function transakcije()
+    {
+        return $this->hasMany(Transakcija::class,'idKorisnik');
+    }
+
+    // public function dokumenti()
+    // {
+    //     return $this->hasMany(Dokument::class,'idKorisnik');
+    // }
+
+
 }

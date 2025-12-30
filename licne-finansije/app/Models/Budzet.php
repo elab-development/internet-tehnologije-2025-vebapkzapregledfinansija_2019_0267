@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Podsetnik extends Model
+class Budzet extends Model
 {
     protected $fillable = [
         'idKorisnik',
-        'opis',
-        'datum',
-        'status',
+        'mesec',
+        'godina',
+        'limit',
+        'potroseno',
     ];
 
     protected $casts = [
-        'datum'=>'datetime',
-        'status'=>'boolean',
+        'limit'=>'decimal:2',
+        'potroseno'=>'decimal:2',
     ];
 
     public function korisnik()
