@@ -7,6 +7,8 @@ use App\Enums\TipTransakcije;
 
 class Transakcija extends Model
 {
+    protected $table = 'transakcije';
+    
     protected $fillable = [
         'idKorisnik',
         'idKategorija',
@@ -14,6 +16,7 @@ class Transakcija extends Model
         'tipTransakcije',
         'iznos',
         'opis',
+        //VALUTA?
     ];
 
     protected $casts = [

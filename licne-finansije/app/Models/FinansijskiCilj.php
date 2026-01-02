@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinansijskiCilj extends Model
 {
+    protected $table = 'finansijskiCiljevi';
+
     protected $fillable = [
         'idKorisnik',
-        // 'naziv',//DAL DA DODAMO OVAJ ATRIBUT
+        'naziv',//DAL DA DODAMO OVAJ ATRIBUT
         'ciljaniIznos',
         'trenutniIznos',
         'rok',

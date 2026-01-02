@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Dokument extends Model
 {
+    protected $table = 'dokumenti';
+    
     protected $fillable = [
-        'idKorisnik',
+        // 'idKorisnik',
         'idTransakcija',
         'nazivFajla',
         'datumDodavanja',
-        // 'putanja,'//DAL DA DODAMO I OVAJ ATRIBUT
-        // 'tip,'//DAL DA DODAMO I OVAJ ATRIBUT
+        'putanja',//DAL DA DODAMO I OVAJ ATRIBUT
+        'tip',//DAL DA DODAMO I OVAJ ATRIBUT
     ];
 
     protected $casts = [
