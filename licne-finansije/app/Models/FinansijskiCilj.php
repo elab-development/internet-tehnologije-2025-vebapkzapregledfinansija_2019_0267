@@ -2,25 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FinansijskiCilj extends Model
 {
-    protected $table = 'finansijskiCiljevi';
+    use HasFactory;
+
+    protected $table = 'finansijski_ciljevi';
 
     protected $fillable = [
         'idKorisnik',
-        //'naziv',DAL DA DODAMO OVAJ ATRIBUT
-        'ciljaniIznos',
-        'trenutniIznos',
+        'naziv',
+        'ciljni_iznos',
+        'trenutni_iznos',
         'rok',
     ];
 
     protected $casts = [
         'rok'=>'date',
-        'ciljaniIznos'=>'decimal:2',
-        'trenutniIznos'=>'decimal:2',
-
+        'ciljni_iznos'=>'decimal:2',
+        'trenutni_iznos'=>'decimal:2',
     ];
 
     public function korisnik()

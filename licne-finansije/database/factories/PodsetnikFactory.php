@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class PodsetnikFactory extends Factory
         return [
             'idKorisnik' => User::factory(),
             'opis' => fake()->sentence(2),
-            'datum' => fake()->dateTimeBetween('now', '+2 months'),
+            'datum_vreme' => fake()->dateTimeBetween('now', '+2 months'),
             'status' => fake()->boolean(80), // 80% sanse da je aktivan status
         ];
     }

@@ -22,7 +22,6 @@ class KategorijaFactory extends Factory
         $prihod = ['Plata', 'Poklon', 'Bonus', 'Stipendija', 'Ostalo'];
         $rashod = ['Hrana', 'Stanovanje', 'Računi', 'Prevoz', 'Zdravstvo', 'Obrazovanje', 'Zabava', 'Odeća', 'Ostalo'];
         return [
-            'idKategorija' => null,
             'naziv' => fake()->randomElement($tip === 'prihod' ? $prihod : $rashod),
             'opis' => fake()->sentence(),
         ];

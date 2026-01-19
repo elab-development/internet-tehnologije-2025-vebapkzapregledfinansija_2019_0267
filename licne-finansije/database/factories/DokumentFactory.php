@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Transakcija;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,10 +18,11 @@ class DokumentFactory extends Factory
     public function definition(): array
     {
         return [
-            'idTransakcija' => Transakcija::factory(),
-            'nazivFajla' => fake()->word() . '.pdf',
-            'putanjaFajla' => '/documents/' . fake()->word() . '.pdf',
-            'velicinaFajla' => fake()->numberBetween(1000, 5000000), // veličina u bajtovima
+            'transakcija_id' => Transakcija::factory(),
+            'naziv' => fake()->word() . '.pdf',
+            'datum' => fake()->dateTime(),
+            'putanja' => '/documents/' . fake()->word() . '.pdf',
+            'tip' => fake()->randomElement(['pdf', 'docx', 'txt', 'xlsx', 'jpg'])
         ];
     }
 }

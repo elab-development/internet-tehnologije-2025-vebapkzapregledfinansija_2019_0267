@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kategorija extends Model
+class Kategorija extends Model  
 {
+    use HasFactory;
+
     protected $table = 'kategorije';
     
     protected $fillable = [
-        'idKategorija',
+       // 'idKategorija',
         'naziv',
         'opis', //RAZMISLITI DAL NAM JE MOZDA I OVO POTREBNO POLJE
 
@@ -17,6 +20,6 @@ class Kategorija extends Model
 
     public function transakcije()
     {
-        return $this->hasMany(Transakcija::class,'idTransakcija');
+        return $this->hasMany(Transakcija::class,'idKategorija');
     }
 }

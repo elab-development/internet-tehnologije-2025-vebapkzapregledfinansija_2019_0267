@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Budzet extends Model
 {
+    use HasFactory;
+
     protected $table = 'budzeti';
 
     protected $fillable = [

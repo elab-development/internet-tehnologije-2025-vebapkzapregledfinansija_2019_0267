@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,9 @@ class FinansijskiCiljFactory extends Factory
     {
         return [
             'idKorisnik' => User::factory(),
-            //'naziv' => fake()->word(),
-            'ciljaniIznos' => fake()->randomFloat(2, 100, 100000),
-            'trenutniIznos' => fake()->randomFloat(2, 0, 50000),
+            'naziv' => fake()->word(),
+            'ciljni_iznos' => fake()->randomFloat(2, 100, 100000),
+            'trenutni_iznos' => fake()->randomFloat(2, 0, 50000),
             'rok' => fake()->dateTimeBetween('now', '+5 years')->format('Y-m-d'),
         ];
     }
