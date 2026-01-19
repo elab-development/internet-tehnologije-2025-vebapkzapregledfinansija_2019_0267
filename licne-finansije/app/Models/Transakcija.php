@@ -16,7 +16,7 @@ class Transakcija extends Model
         'tipTransakcije',
         'iznos',
         'opis',
-        //VALUTA?
+        'valuta'
     ];
 
     protected $casts = [

@@ -10,7 +10,7 @@ class FinansijskiCilj extends Model
 
     protected $fillable = [
         'idKorisnik',
-        'naziv',//DAL DA DODAMO OVAJ ATRIBUT
+        //'naziv',DAL DA DODAMO OVAJ ATRIBUT
         'ciljaniIznos',
         'trenutniIznos',
         'rok',

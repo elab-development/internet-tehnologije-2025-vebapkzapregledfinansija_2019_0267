@@ -9,6 +9,7 @@ class Kategorija extends Model
     protected $table = 'kategorije';
     
     protected $fillable = [
+        'idKategorija',
         'naziv',
         'opis', //RAZMISLITI DAL NAM JE MOZDA I OVO POTREBNO POLJE
 
