@@ -23,7 +23,7 @@ class Transakcija extends Model
     ];
 
     protected $casts = [
-        'datumVreme'=>'datetime',
+        'datum_vreme'=>'datetime',
         'iznos'=>'decimal:2',
         'tipTransakcije'=>TipTransakcije::class,
     ];

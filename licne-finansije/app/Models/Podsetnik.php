@@ -15,7 +15,7 @@ class Podsetnik extends Model
         'idKorisnik',
         'opis',
         'datum_vreme',
-        'status',
+        'status', 
     ];
 
     protected $casts = [

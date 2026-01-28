@@ -21,7 +21,7 @@ class Dokument extends Model
     ];
 
     protected $casts = [
-        'datumDodavanja'=>'datetime',
+        'datum'=>'datetime',
     ];
 
 

@@ -17,7 +17,7 @@ class FinansijskiCilj extends Model
         'ciljni_iznos',
         'trenutni_iznos',
         'rok',
-    ];
+    ]; 
 
     protected $casts = [
         'rok'=>'date',
