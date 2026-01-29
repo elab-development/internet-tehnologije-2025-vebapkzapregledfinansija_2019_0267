@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\VerifyEmail;
+use Illuminate\Support\Facades\URL;
+
 
 
 class AuthController extends Controller
@@ -28,7 +32,7 @@ class AuthController extends Controller
                 'errors' => $validator->errors()
             ], 422);
             }
-            
+
             $data = $validator->validated();
             $user = User::create([
                 'ime' => $data['ime'],
@@ -37,12 +41,18 @@ class AuthController extends Controller
                 'password' => Hash::make($data['password']),
             ]);
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+            //Verifikacioni mejl
+            $url=URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(60), //Token vazi 60 minuta
+                ['id' => $user->id]
+            );
+           // $url = url('/api/email/verify/' . $user->id);
+            Mail::to($user->email)->send(new VerifyEmail($user, $url));
 
             return response()->json([
                 'message' => 'Registracija uspesna',
                 'user' => $user,
-                'token' => $token,
             ], 201);
         
     }   
@@ -71,6 +81,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        if($user->email_verified_at==null) {
+            return response()->json([
+                'message' => 'Email adresa nije verifikovana.'
+            ], 400);
+        }
+
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -95,5 +112,30 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json($request->user(), 200);
+    }
+
+    public function verifyEmail(Request $request, $id)
+    {
+
+         if(!request()->hasValidSignature()) {
+            return response()->json([
+                'message' => 'Verifikacioni link nije validan ili je istekao.'
+            ], 400);
+        }  
+
+        $user = User::findOrFail($id);
+
+        if($user->email_verified_at) {
+            return response()->json([
+                'message' => 'Email adresa je vec verifikovana.'
+            ], 400);
+        }
+
+        $user->email_verified_at = now();
+        $user->save();
+
+        return response()->json([
+            'message' => 'Email adresa je uspesno verifikovana.'
+        ], 200);
     }
 }
