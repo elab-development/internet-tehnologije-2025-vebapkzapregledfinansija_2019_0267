@@ -9,13 +9,16 @@ use App\Http\Controllers\PodsetnikController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForgotPasswordController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+Route::post('password/forgot', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('password/reset', [ForgotPasswordController::class, 'resetPassword']);
 
+Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
