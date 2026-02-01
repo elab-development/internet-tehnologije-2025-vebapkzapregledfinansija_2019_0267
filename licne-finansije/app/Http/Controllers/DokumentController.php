@@ -100,7 +100,7 @@ class DokumentController extends Controller
      */
     public function destroy($id)
     {
-        $dokument=Dokukment::find($id);
+        $dokument=Dokument::find($id);
         if($dokument){
             $dokument->delete();
             return response()->json(['message'=>'Dokument je obrisan'],200);
