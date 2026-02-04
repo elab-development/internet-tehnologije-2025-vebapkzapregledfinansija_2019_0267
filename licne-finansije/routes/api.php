@@ -23,6 +23,7 @@ Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    //potencijalno zastiti i jos neke rute
 });
 
 //Budzet rute

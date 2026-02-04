@@ -89,7 +89,7 @@ class ForgotPasswordController extends Controller
 
         if(!$record){
             return response()->json([
-                'message' => 'Neipravan token ili email'
+                'message' => 'Neispravan token ili email'
             ], 404);
         }
 
