@@ -1,5 +1,6 @@
 import React from 'react'
 import FeatureCard from './FeatureCard';
+import '../pages/Pocetna.css';
 
 const FEATURES = [
     {
