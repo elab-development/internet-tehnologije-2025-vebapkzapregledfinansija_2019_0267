@@ -49,8 +49,9 @@ const Navbar = () => {
                     Proba
                   </button>
 
-                  <PrimaryButton onClick={handleLogout}>Odjava</PrimaryButton> 
-
+                  <button
+                    className="btn primary"
+                    onClick={handleLogout}>Odjava</button>    
 
                 </>
               ): (
