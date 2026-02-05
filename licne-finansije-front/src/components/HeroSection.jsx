@@ -16,7 +16,7 @@ const HeroSection = () => {
             </p>
             <div className="hero-actions">
                 <button className="btn primary" onClick={() => navigate("/login")}>Prijava</button>
-                <button className="btn secondary">Kreiraj nalog</button>
+                <button className="btn secondary" onClick={() => navigate("/register")}>Kreiraj nalog</button>
             </div>
         </div>
 

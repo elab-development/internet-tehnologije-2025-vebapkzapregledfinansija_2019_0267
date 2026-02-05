@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import './LoginPage.css';
+import PasswordInput from '../../components/PasswordInput';
 
 const LoginPage = () => {
 
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('vasilijegogic29@gmail.com');
+    const [password, setPassword] = useState('vaske123');
 
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -60,12 +61,17 @@ const LoginPage = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
+        {/* <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+        /> */}
+        <PasswordInput
+          placeholder="Lozinka"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
        
             {info && <div className="info">{info}</div>}

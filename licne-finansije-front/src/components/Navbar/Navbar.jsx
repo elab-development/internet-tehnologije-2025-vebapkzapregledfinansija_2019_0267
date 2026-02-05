@@ -1,22 +1,75 @@
-import React from 'react'
+import React, { use } from 'react'
 import './Navbar.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import PrimaryButton from '../PrimaryButton';
+import api from '../../api/api';
 
 const Navbar = () => {
+
+  const location=useLocation();
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuth(!!token);
+    console.log("location changed:", location.pathname);
+    console.log("isAuth:", isAuth);
+    console.log("token:", token);
+  }, [location]);
+
   const navigate = useNavigate();
+
+  const handleLogout = async() => {
+    try {
+      await api.post("/logout");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      setIsAuth(false);
+      navigate("/login");
+    }
+  }
 
   return (
     <nav className="navbar">
         <div className="navbar-container">
-            <span className="logo">FinTrack</span>
+            <span className="logo" onClick={() => navigate("/")} style={{cursor: "pointer"}}>FinTrack</span>
             <div className="nav-actions">
-            <button
-              className="btn secondary"
-              onClick={() => navigate("/login")}
-            >
-              Prijava
-            </button>
-            <button className="btn primary">Kreiraj nalog</button>
+
+              {isAuth ? (
+                <>
+                  <button 
+                  className="btn secondary"
+                  //ZAMENITI ODGOVARAJUCOM STRANICOM KADA SE NAPRAVI
+                  onClick={() => navigate("/proba")}>
+                    Proba
+                  </button>
+
+                  <PrimaryButton onClick={handleLogout}>Odjava</PrimaryButton> 
+
+
+                </>
+              ): (
+                <>
+                <button
+                  className="btn secondary"
+                  onClick={() => navigate("/login")}
+                >
+                    Prijava
+                </button>
+                <button 
+                  className="btn primary"
+                  onClick={() => navigate("/register")}
+                >
+                    Kreiraj nalog
+                </button>
+                </>
+              )}
+              
             </div>
         </div>
     </nav>

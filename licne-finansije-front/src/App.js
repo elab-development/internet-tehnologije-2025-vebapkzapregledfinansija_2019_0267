@@ -6,6 +6,7 @@ import LoginPage from './pages/Login/LoginPage';
 import Proba from './pages/Proba';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
+import RegistrationPage from './pages/RegistrationPage';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Pocetna />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegistrationPage />} />
         <Route path="/proba" element={<Proba />} />
         
       </Routes>
