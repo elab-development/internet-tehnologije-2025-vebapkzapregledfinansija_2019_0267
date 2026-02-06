@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TransakcijaResource;
 use App\Models\Transakcija;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\TransakcijaResource;
 
 class TransakcijaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index() 
+    public function index()
     {
         return TransakcijaResource::collection(Transakcija::all());
     }
@@ -40,11 +40,12 @@ class TransakcijaController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $transakcija = Transakcija::create($data);
+
         return response()->json(new TransakcijaResource($transakcija), 200);
     }
 
@@ -80,11 +81,12 @@ class TransakcijaController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $transakcija->update($data);
+
         return response()->json(new TransakcijaResource($transakcija), 200);
     }
 
@@ -94,12 +96,131 @@ class TransakcijaController extends Controller
     public function destroy($id)
     {
         $transakcija = Transakcija::find($id);
-       if ($transakcija) {
-           $transakcija->delete();
-           return response()->json(['message' => 'Transakcija je obrisana'], 200);
-       } else {
-           return response()->json(['message' => 'Transakcija nije pronadjena'], 404);
-       }
+        if ($transakcija) {
+            $transakcija->delete();
 
+            return response()->json(['message' => 'Transakcija je obrisana'], 200);
+        } else {
+            return response()->json(['message' => 'Transakcija nije pronadjena'], 404);
+        }
+
+    }
+
+    public function pregledTransakcija(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $transakcije = Transakcija::where('idKorisnik', $userId)->orderByDesc('datum_vreme')->get();
+
+        return response()->json(TransakcijaResource::collection($transakcije));
+    }
+
+    public function mojiPrihodi(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $transakcije = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'prihod')
+            ->orderByDesc('datum_vreme')
+            ->get();
+
+        return response()->json(TransakcijaResource::collection($transakcije));
+
+    }
+
+    public function mojiRashodi(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $transakcije = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'rashod')
+            ->orderByDesc('datum_vreme')
+            ->get();
+
+        return response()->json(TransakcijaResource::collection($transakcije));
+
+    }
+
+    public function mojiPrihodiPaginacija(Request $request)
+    {
+        $userId = $request->user()->id;
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'prihod')
+            ->orderByDesc('datum_vreme');
+
+        $paginator = $query->paginate($perPage);
+
+        return TransakcijaResource::collection($paginator);
+
+    }
+
+    public function mojiRashodiPaginacija(Request $request)
+    {
+        $userId = $request->user()->id;
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'rashod')
+            ->orderByDesc('datum_vreme');
+
+        $paginator = $query->paginate($perPage);
+
+        return TransakcijaResource::collection($paginator);
+    }
+
+    public function mojiPrihodiPaginacijaFilter(Request $request)
+    {
+        $userId = $request->user()->id;
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'prihod');
+
+        if ($request->filled ('idKategorija')) {
+            $query->where('idKategorija', $request->get('idKategorija'));
+        }
+
+        if($request->filled('datumOd')) {
+            $query->whereDate('datum_vreme', '>=', $request->get('datumOd'));
+        }
+
+        if($request->filled('datumDo')) {
+            $query->whereDate('datum_vreme', '<=', $request->get('datumDo'));
+        }
+
+        $query->orderByDesc('datum_vreme');
+
+        $paginator = $query->paginate($perPage);
+
+        return TransakcijaResource::collection($paginator);
+    }
+
+    public function mojiRashodiPaginacijaFilter(Request $request)
+    {
+        $userId = $request->user()->id;
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = Transakcija::where('idKorisnik', $userId)
+            ->where('tipTransakcije', 'rashod');
+
+        if ($request->filled ('idKategorija')) {
+            $query->where('idKategorija', $request->get('idKategorija'));
+        }
+
+        if($request->filled('datumOd')) {
+            $query->whereDate('datum_vreme', '>=', $request->get('datumOd'));
+        }
+
+        if($request->filled('datumDo')) {
+            $query->whereDate('datum_vreme', '<=', $request->get('datumDo'));
+        }
+
+        $query->orderByDesc('datum_vreme');
+
+        $paginator = $query->paginate($perPage);
+
+        return TransakcijaResource::collection($paginator);
     }
 }
