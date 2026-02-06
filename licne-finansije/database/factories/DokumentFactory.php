@@ -17,12 +17,13 @@ class DokumentFactory extends Factory
      */
     public function definition(): array
     {
+        $ext = fake()->randomElement(['pdf','docx','xlsx','jpg','jpeg','png']);
         return [
             'transakcija_id' => Transakcija::factory(),
-            'naziv' => fake()->word() . '.pdf',
+            'naziv' => fake()->word().'.pdf',
             'datum' => fake()->dateTime(),
-            'putanja' => '/documents/' . fake()->word() . '.pdf',
-            'tip' => fake()->randomElement(['pdf', 'docx', 'txt', 'xlsx', 'jpg'])
+            'putanja' => '/documents/'.fake()->word().'.pdf',
+            'tip' => fake()->randomElement(['pdf', 'docx', 'txt', 'xlsx', 'jpg']),
         ];
     }
 }

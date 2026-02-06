@@ -24,6 +24,7 @@ class AuthController extends Controller
             'prezime' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'profilnaSlika' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -33,13 +34,13 @@ class AuthController extends Controller
             ], 422);
             }
 
-            $data = $validator->validated();
-            $user = User::create([
-                'ime' => $data['ime'],
-                'prezime' => $data['prezime'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
+        $data = $validator->validated();
+        $user = User::create([
+            'ime' => $data['ime'],
+            'prezime' => $data['prezime'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
             //Verifikacioni mejl
             $url=URL::temporarySignedRoute(

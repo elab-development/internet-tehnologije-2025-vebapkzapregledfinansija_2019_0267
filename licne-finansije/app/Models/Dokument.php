@@ -16,8 +16,8 @@ class Dokument extends Model
         'idTransakcija',
         'nazivFajla',
         'datumDodavanja',
-        'putanja',//DAL DA DODAMO I OVAJ ATRIBUT
-        'tip',//DAL DA DODAMO I OVAJ ATRIBUT
+        'putanja', // DAL DA DODAMO I OVAJ ATRIBUT
+        'tip', // DAL DA DODAMO I OVAJ ATRIBUT
     ];
 
     protected $casts = [
@@ -28,6 +28,35 @@ class Dokument extends Model
     public function transakcija()
     {
         return $this->belongsTo(Transakcija::class,'idTransakcija');
+    }
+
+    public function setIdTransakcijaAttribute($value)
+    {
+        $this->attributes['transakcija_id'] = $value;
+    }
+        public function getIdTransakcijaAttribute() 
+    {
+        return $this->attributes['transakcija_id'];
+    }
+
+     public function setNazivFajlaAttribute($value)
+    {
+        $this->attributes['naziv'] = $value;
+    }
+
+     public function getNazivFajlaAttribute()
+    {
+        return $this->attributes['naziv'];
+    }
+
+    public function setDatumDodavanjaAttribute($value)
+    {
+        $this->attributes['datum'] = $value;
+    }
+
+    public function getDatumDodavanjaAttribute()
+    {
+        return $this->attributes['datum'];
     }
 
     //  public function korisnik()
