@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Kategorija;
-use App\Models\Transakcija;
 use App\Models\Budzet;
 use App\Models\Dokument;
 use App\Models\FinansijskiCilj;
-use App\Models\Podsetnik;   
+use App\Models\Kategorija;
+use App\Models\Podsetnik;
+use App\Models\Transakcija;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -26,6 +26,5 @@ class DatabaseSeeder extends Seeder
         FinansijskiCilj::factory(10)->create();
         Podsetnik::factory(5)->create();
 
-       
     }
 }

@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\TipTransakcije;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\TipTransakcije;
 
 class Transakcija extends Model
 {
     use HasFactory;
 
     protected $table = 'transakcije';
-    
+
     protected $fillable = [
         'idKorisnik',
         'idKategorija',
@@ -19,27 +19,27 @@ class Transakcija extends Model
         'tipTransakcije',
         'iznos',
         'opis',
-        'valuta'
+        'valuta',
     ];
 
     protected $casts = [
-        'datum_vreme'=>'datetime',
-        'iznos'=>'decimal:2',
-        'tipTransakcije'=>TipTransakcije::class,
+        'datum_vreme' => 'datetime',
+        'iznos' => 'decimal:2',
+        'tipTransakcije' => TipTransakcije::class,
     ];
 
     public function korisnik()
     {
-        return $this->belongsTo(User::class,'idKorisnik');
+        return $this->belongsTo(User::class, 'idKorisnik');
     }
 
     public function kategorija()
     {
-        return $this->belongsTo(Kategorija::class,'idKategorija');
+        return $this->belongsTo(Kategorija::class, 'idKategorija');
     }
 
     public function dokumenti()
     {
-        return $this->hasMany(Dokument::class,'idTransakcija');
+        return $this->hasMany(Dokument::class, 'idTransakcija');
     }
 }

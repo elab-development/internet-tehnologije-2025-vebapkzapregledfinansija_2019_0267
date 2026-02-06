@@ -2,23 +2,20 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 use App\Models\User;
-
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
 class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public User $user;
+
     public string $token;
+
     public string $resetUrl;
-  
 
     /**
      * Create a new message instance.
@@ -27,17 +24,17 @@ class ResetPasswordMail extends Mailable
     {
         $this->user = $user;
         $this->token = $token;
-        $this->resetUrl = $resetUrl; //Otvara se forma za reset lozinke na frontendu
-       
+        $this->resetUrl = $resetUrl; // Otvara se forma za reset lozinke na frontendu
+
     }
 
     /**
      *Build the message.
      */
-   public function build()
-   {
-    return $this
-    ->subject('Reset lozinke')
-    ->markdown('emails.password-reset');
-   }
+    public function build()
+    {
+        return $this
+            ->subject('Reset lozinke')
+            ->markdown('emails.password-reset');
+    }
 }

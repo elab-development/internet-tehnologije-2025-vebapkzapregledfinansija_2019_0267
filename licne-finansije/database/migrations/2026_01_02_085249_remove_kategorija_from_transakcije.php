@@ -12,17 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transakcije', function (Blueprint $table) {
-      
+
             $table->dropForeign(['kategorija_id']);
 
-            
             $table->renameColumn('kategorija_id', 'idKategorija');
 
-           
             $table->foreign('idKategorija')
-                  ->references('id')
-                  ->on('kategorije')
-                  ->cascadeOnDelete();
+                ->references('id')
+                ->on('kategorije')
+                ->cascadeOnDelete();
         });
     }
 
@@ -32,16 +30,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transakcije', function (Blueprint $table) {
-           
+
             $table->dropForeign(['idKategorija']);
 
-            
             $table->renameColumn('idKategorija', 'kategorija_id');
 
-            
             $table->foreign('kategorija_id')
-                  ->references('id')
-                  ->on('kategorije');
+                ->references('id')
+                ->on('kategorije');
         });
     }
 };

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
-
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
@@ -26,16 +25,16 @@ class ForgotPasswordController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Neuspesna validacija email adrese',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $email = $validator->validated()['email'];
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
-                'message' => 'Korisnik sa datom email adresom ne postoji'
+                'message' => 'Korisnik sa datom email adresom ne postoji',
             ], 404);
         }
 
@@ -43,25 +42,24 @@ class ForgotPasswordController extends Controller
         $token = Str::random(60);
 
         // Upisemo u password_reset_tokens tabelu
-        DB::table('password_reset_tokens')->updateOrInsert( //jedan korisnik moze vise puta traziti reset lozinke
+        DB::table('password_reset_tokens')->updateOrInsert( // jedan korisnik moze vise puta traziti reset lozinke
             ['email' => $user->email],
             [
                 'token' => Hash::make($token),
-                'created_at' =>Carbon::now()
+                'created_at' => Carbon::now(),
             ]
         );
 
         // Kreiramo URL za resetovanje lozinke
-        $resetUrl = config('app.frontend_url', config('app.url')) . 
-            '/reset-password?token=' . urlencode($token) . 
-            '&email=' . urlencode($user->email);
-
+        $resetUrl = config('app.frontend_url', config('app.url')).
+            '/reset-password?token='.urlencode($token).
+            '&email='.urlencode($user->email);
 
         // Saljemo mejl korisniku sa linkom za resetovanje lozinke (Mailtrap)
         Mail::to($user->email)->send(new ResetPasswordMail($user, $token, $resetUrl));
 
         return response()->json([
-            'message' => 'Poslat link za resetovanje lozinke na email adresu ako postoji u sistemu'
+            'message' => 'Poslat link za resetovanje lozinke na email adresu ako postoji u sistemu',
         ], 200);
 
     }
@@ -78,31 +76,31 @@ class ForgotPasswordController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Neuspesna validacija',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-        $data=$validator->validated();
+        $data = $validator->validated();
 
         // Provjeravamo ispravnost mejla i tokena
         $record = DB::table('password_reset_tokens')->where('email', $data['email'])->first();
 
-        if(!$record){
+        if (! $record) {
             return response()->json([
-                'message' => 'Neispravan token ili email'
+                'message' => 'Neispravan token ili email',
             ], 404);
         }
 
         $createdAt = Carbon::parse($record->created_at);
         if ($createdAt->addMinutes(60)->isPast()) {
             return response()->json([
-                'message' => 'Token za resetovanje lozinke je istekao. Posaljite novi zahtev za resetovanje lozinke.'
+                'message' => 'Token za resetovanje lozinke je istekao. Posaljite novi zahtev za resetovanje lozinke.',
             ], 400);
         }
         // Proveravamo da li je token validan (poredimo heširanu vrednost u bazi sa prosleđenim tokenom)
-        if (!Hash::check($data['token'], $record->token)) {
+        if (! Hash::check($data['token'], $record->token)) {
             return response()->json([
-                'message' => 'Token za resetovanje lozinke nije validan'
+                'message' => 'Token za resetovanje lozinke nije validan',
             ], 400);
         }
 
@@ -115,12 +113,8 @@ class ForgotPasswordController extends Controller
         DB::table('password_reset_tokens')->where('email', $data['email'])->delete();
 
         return response()->json([
-            'message' => 'Lozinka uspesno resetovana'
+            'message' => 'Lozinka uspesno resetovana',
         ], 200);
 
     }
-
-
-
-
 }

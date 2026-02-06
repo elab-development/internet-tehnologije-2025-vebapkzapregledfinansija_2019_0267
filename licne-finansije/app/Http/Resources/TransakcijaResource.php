@@ -21,7 +21,7 @@ class TransakcijaResource extends JsonResource
             'datumVreme' => $this->datum_vreme ? $this->datum_vreme->format('d.m.Y. H:i:s') : null,
             'tipTransakcije' => $this->tipTransakcije,
             'iznos' => $this->iznos,
-            'valuta' => $this->valuta, 
+            'valuta' => $this->valuta,
         ];
     }
 }

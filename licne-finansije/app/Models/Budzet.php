@@ -20,12 +20,12 @@ class Budzet extends Model
     ];
 
     protected $casts = [
-        'limit'=>'decimal:2',
-        'potroseno'=>'decimal:2',
+        'limit' => 'decimal:2',
+        'potroseno' => 'decimal:2',
     ];
 
     public function korisnik()
     {
-        return $this->belongsTo(User::class,'idKorisnik');
+        return $this->belongsTo(User::class, 'idKorisnik');
     }
 }

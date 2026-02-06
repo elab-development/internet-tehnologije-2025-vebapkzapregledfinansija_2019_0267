@@ -24,8 +24,8 @@ return new class extends Migration
     {
         Schema::table('transakcije', function (Blueprint $table) {
             $table->foreignId('idKorisnik')
-                  ->constrained('users')
-                  ->cascadeOnDelete();
+                ->constrained('users')
+                ->cascadeOnDelete();
         });
     }
 };

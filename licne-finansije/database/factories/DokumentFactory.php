@@ -19,10 +19,10 @@ class DokumentFactory extends Factory
     {
         return [
             'transakcija_id' => Transakcija::factory(),
-            'naziv' => fake()->word() . '.pdf',
+            'naziv' => fake()->word().'.pdf',
             'datum' => fake()->dateTime(),
-            'putanja' => '/documents/' . fake()->word() . '.pdf',
-            'tip' => fake()->randomElement(['pdf', 'docx', 'txt', 'xlsx', 'jpg'])
+            'putanja' => '/documents/'.fake()->word().'.pdf',
+            'tip' => fake()->randomElement(['pdf', 'docx', 'txt', 'xlsx', 'jpg']),
         ];
     }
 }

@@ -17,7 +17,7 @@ class KategorijaResource extends JsonResource
         return [
             'id' => $this->id,
             'naziv' => $this->naziv,
-            'opis' => $this->opis
+            'opis' => $this->opis,
         ];
     }
 }

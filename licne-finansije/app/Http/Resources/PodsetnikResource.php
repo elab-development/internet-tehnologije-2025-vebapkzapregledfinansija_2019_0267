@@ -18,8 +18,8 @@ class PodsetnikResource extends JsonResource
             'idKorisnik' => $this->idKorisnik,
             'opis' => $this->opis,
             'datum_vreme' => $this->datum_vreme->format('d.m.Y. H:i:s'),
-            'status' => $this->status, 
-            'status_text' => $this->status ? 'Aktivan' : 'Neaktivan'
+            'status' => $this->status,
+            'status_text' => $this->status ? 'Aktivan' : 'Neaktivan',
         ];
     }
 }

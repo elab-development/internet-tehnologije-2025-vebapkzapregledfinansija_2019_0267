@@ -19,7 +19,7 @@ class FinansijskiCiljResource extends JsonResource
             'naziv' => $this->naziv,
             'ciljni_iznos' => $this->ciljni_iznos,
             'trenutni_iznos' => $this->trenutni_iznos,
-            'rok' => $this->rok->format('d-m-Y')
+            'rok' => $this->rok->format('d-m-Y'),
         ];
     }
 }

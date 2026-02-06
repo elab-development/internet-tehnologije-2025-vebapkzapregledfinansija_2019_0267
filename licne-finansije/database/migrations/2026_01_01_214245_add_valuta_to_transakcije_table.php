@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transakcije', function (Blueprint $table) {
-            $table->string('valuta',3)->default('RSD')->after('iznos');
+            $table->string('valuta', 3)->default('RSD')->after('iznos');
         });
     }
 

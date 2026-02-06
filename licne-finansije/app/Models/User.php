@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\Uloga;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Enums\Uloga;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'ime',
@@ -53,28 +53,27 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function podsetnici()
     {
-        return $this->hasMany(Podsetnik::class,'idKorisnik');
+        return $this->hasMany(Podsetnik::class, 'idKorisnik');
     }
 
     public function budzeti()
     {
-        return $this->hasMany(Budzet::class,'idKorisnik');
+        return $this->hasMany(Budzet::class, 'idKorisnik');
     }
 
     public function finansijskiCiljevi()
     {
-        return $this->hasMany(FinansijskiCilj::class,'idKorisnik');
+        return $this->hasMany(FinansijskiCilj::class, 'idKorisnik');
     }
 
     public function transakcije()
     {
-        return $this->hasMany(Transakcija::class,'idKorisnik');
+        return $this->hasMany(Transakcija::class, 'idKorisnik');
     }
 
     // public function dokumenti()
     // {
     //     return $this->hasMany(Dokument::class,'idKorisnik');
     // }
-
 
 }

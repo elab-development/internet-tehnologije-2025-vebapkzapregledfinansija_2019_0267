@@ -2,21 +2,18 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 use App\Models\User;
-
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
 class VerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public User $user;
-    public string $verificationUrl; 
+
+    public string $verificationUrl;
 
     /**
      * Create a new message instance.
@@ -30,8 +27,9 @@ class VerifyEmail extends Mailable
     /**
      * Build the message.
      */
-    public function build() {
+    public function build()
+    {
         return $this->subject('Verifikacija email adrese')
-                    ->markdown('emails.verify-email');
+            ->markdown('emails.verify-email');
     }
 }

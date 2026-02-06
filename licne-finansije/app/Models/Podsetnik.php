@@ -15,16 +15,16 @@ class Podsetnik extends Model
         'idKorisnik',
         'opis',
         'datum_vreme',
-        'status', 
+        'status',
     ];
 
     protected $casts = [
-        'datum_vreme'=>'datetime',
-        'status'=>'boolean',
+        'datum_vreme' => 'datetime',
+        'status' => 'boolean',
     ];
 
     public function korisnik()
     {
-        return $this->belongsTo(User::class,'idKorisnik');
+        return $this->belongsTo(User::class, 'idKorisnik');
     }
 }

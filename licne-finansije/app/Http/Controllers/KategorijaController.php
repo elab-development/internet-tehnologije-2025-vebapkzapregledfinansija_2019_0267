@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\KategorijaResource;
 use App\Models\Kategorija;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\KategorijaResource;
 
 class KategorijaController extends Controller
 {
@@ -37,11 +37,12 @@ class KategorijaController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $kategorija = Kategorija::create($data);
+
         return response()->json(new KategorijaResource($kategorija), 200);
     }
 
@@ -68,7 +69,7 @@ class KategorijaController extends Controller
     {
         $kategorija = Kategorija::find($id);
 
-        if (!$kategorija) {
+        if (! $kategorija) {
             return response()->json(['message' => 'Kategorija nije pronadjena'], 404);
         }
 
@@ -79,12 +80,13 @@ class KategorijaController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
 
         $data = $validator->validated();
         $kategorija->update($data);
+
         return response()->json(new KategorijaResource($kategorija), 200);
     }
 
@@ -93,12 +95,13 @@ class KategorijaController extends Controller
      */
     public function destroy($id)
     {
-        $kategorija=Kategorija::find($id);
-        if($kategorija){
+        $kategorija = Kategorija::find($id);
+        if ($kategorija) {
             $kategorija->delete();
-            return response()->json(['message'=>'Kategorija je obrisana'],200);
-        }else{
-            return response()->json(['message'=>'Kategorija nije pronadjena'],404);
-         }
-    }   
+
+            return response()->json(['message' => 'Kategorija je obrisana'], 200);
+        } else {
+            return response()->json(['message' => 'Kategorija nije pronadjena'], 404);
+        }
+    }
 }

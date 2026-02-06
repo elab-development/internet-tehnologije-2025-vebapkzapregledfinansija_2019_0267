@@ -19,7 +19,7 @@ class DokumentResource extends JsonResource
             'nazivFajla' => $this->naziv,
             'datumDodavanja' => $this->datum?->format('d.m.Y.'),
             'putanja' => $this->putanja,
-            'tip' => $this->tip
-        ]; 
+            'tip' => $this->tip,
+        ];
     }
 }

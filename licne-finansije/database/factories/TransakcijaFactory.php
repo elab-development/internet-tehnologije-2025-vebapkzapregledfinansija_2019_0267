@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Kategorija;
 use App\Enums\TipTransakcije;
+use App\Models\Kategorija;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,8 +25,8 @@ class TransakcijaFactory extends Factory
             'datum_vreme' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'tipTransakcije' => fake()->randomElement([TipTransakcije::PRIHOD, TipTransakcije::RASHOD]),
             'iznos' => fake()->randomFloat(2, 10, 100000),
-            'opis' => fake()->sentence(), 
-            'valuta' => fake()->randomElement(['USD', 'EUR', 'RSD'])    
+            'opis' => fake()->sentence(),
+            'valuta' => fake()->randomElement(['USD', 'EUR', 'RSD']),
         ];
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FinansijskiCiljResource;
 use App\Models\FinansijskiCilj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\FinansijskiCiljResource;
 
 class FinansijskiCiljController extends Controller
 {
@@ -39,11 +39,12 @@ class FinansijskiCiljController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $finansijskiCilj = FinansijskiCilj::create($data);
+
         return response()->json(new FinansijskiCiljResource($finansijskiCilj), 200);
     }
 
@@ -78,13 +79,14 @@ class FinansijskiCiljController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);    
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         } else {
-        $data = $validator->validated();
-        $finansijskiCilj->update($data);
-        return response()->json(new FinansijskiCiljResource($finansijskiCilj), 200);
-         }
+            $data = $validator->validated();
+            $finansijskiCilj->update($data);
+
+            return response()->json(new FinansijskiCiljResource($finansijskiCilj), 200);
+        }
     }
 
     /**
@@ -93,10 +95,11 @@ class FinansijskiCiljController extends Controller
     public function destroy($id)
     {
         $finansijskiCilj = FinansijskiCilj::find($id);
-        if (!$finansijskiCilj) {
+        if (! $finansijskiCilj) {
             return response()->json(['message' => 'Finansijski cilj nije pronadjen'], 404);
         }
         $finansijskiCilj->delete();
+
         return response()->json(['message' => 'Finansijski cilj je obrisan'], 200);
     }
 }

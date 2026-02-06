@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DokumentResource;
 use App\Models\Dokument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\DokumentResource;
 
 class DokumentController extends Controller
 {
@@ -38,16 +38,17 @@ class DokumentController extends Controller
             'tip' => 'required|string|max:50',
         ]);
 
-        //NIJE PROSLA VALIDACIJA
+        // NIJE PROSLA VALIDACIJA
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
-        //PROSLA JE VALIDACIJA
+        // PROSLA JE VALIDACIJA
         $data = $validator->validated();
         $dokument = Dokument::create($data);
-        return response()->json(new DokumentResource($dokument), 200); 
+
+        return response()->json(new DokumentResource($dokument), 200);
     }
 
     /**
@@ -72,9 +73,9 @@ class DokumentController extends Controller
     public function update(Request $request, $id)
     {
         $dokument = Dokument::find($id);
-        if (!$dokument) {
+        if (! $dokument) {
             return response()->json(['message' => 'Dokument nije pronadjen'], 404);
-        }   
+        }
         $validator = Validator::make($request->all(), [
             'idTransakcija' => 'sometimes|integer|exists:transakcije,id',
             'nazivFajla' => 'sometimes|string|max:255',
@@ -83,16 +84,17 @@ class DokumentController extends Controller
             'tip' => 'nullable|string|max:50',
         ]);
 
-        //NIJE PROSLA VALIDACIJA
+        // NIJE PROSLA VALIDACIJA
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);
-    }
-        //PROSLA JE VALIDACIJA - AZURIRAMO DOKUMENT
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
+        }
+        // PROSLA JE VALIDACIJA - AZURIRAMO DOKUMENT
         $data = $validator->validated();
         $dokument->update($data);
-        return response()->json(new DokumentResource($dokument), 200); 
+
+        return response()->json(new DokumentResource($dokument), 200);
     }
 
     /**
@@ -100,12 +102,13 @@ class DokumentController extends Controller
      */
     public function destroy($id)
     {
-        $dokument=Dokument::find($id);
-        if($dokument){
+        $dokument = Dokument::find($id);
+        if ($dokument) {
             $dokument->delete();
-            return response()->json(['message'=>'Dokument je obrisan'],200);
-        }else{
-            return response()->json(['message'=>'Dokument nije pronadjen'],404);
-         }
+
+            return response()->json(['message' => 'Dokument je obrisan'], 200);
+        } else {
+            return response()->json(['message' => 'Dokument nije pronadjen'], 404);
+        }
     }
 }

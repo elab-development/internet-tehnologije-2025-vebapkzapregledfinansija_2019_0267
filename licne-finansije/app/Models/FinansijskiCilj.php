@@ -17,16 +17,16 @@ class FinansijskiCilj extends Model
         'ciljni_iznos',
         'trenutni_iznos',
         'rok',
-    ]; 
+    ];
 
     protected $casts = [
-        'rok'=>'date',
-        'ciljni_iznos'=>'decimal:2',
-        'trenutni_iznos'=>'decimal:2',
+        'rok' => 'date',
+        'ciljni_iznos' => 'decimal:2',
+        'trenutni_iznos' => 'decimal:2',
     ];
 
     public function korisnik()
     {
-        return $this->belongsTo(User::class,'idKorisnik');
+        return $this->belongsTo(User::class, 'idKorisnik');
     }
 }

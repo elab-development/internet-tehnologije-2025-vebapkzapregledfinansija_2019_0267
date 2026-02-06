@@ -24,7 +24,7 @@ class BudzetFactory extends Factory
             'mesec' => fake()->numberBetween(1, 12),
             'godina' => fake()->year(),
             'limit' => $limit,
-            'potroseno' => fake()->randomFloat(2, 0, $limit)
+            'potroseno' => fake()->randomFloat(2, 0, $limit),
         ];
     }
 }

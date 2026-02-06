@@ -16,12 +16,12 @@ class BudzetResource extends JsonResource
     {
         return
         [
-        'idBudzet' => $this->id,
-        'idKorisnik' => $this->idKorisnik,
-        'mesec' => $this->mesec,
-        'godina' => $this->godina,
-        'limit' => $this->limit,
-        'potroseno' => $this->potroseno
+            'idBudzet' => $this->id,
+            'idKorisnik' => $this->idKorisnik,
+            'mesec' => $this->mesec,
+            'godina' => $this->godina,
+            'limit' => $this->limit,
+            'potroseno' => $this->potroseno,
         ];
     }
 }

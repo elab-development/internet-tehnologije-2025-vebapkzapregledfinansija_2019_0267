@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\VerifyEmail;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
-
-
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    //REGISTRACIJA
+    // REGISTRACIJA
 
     public function register(Request $request)
     {
@@ -29,35 +27,35 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation errors',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
-            }
+        }
 
-            $data = $validator->validated();
-            $user = User::create([
-                'ime' => $data['ime'],
-                'prezime' => $data['prezime'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
+        $data = $validator->validated();
+        $user = User::create([
+            'ime' => $data['ime'],
+            'prezime' => $data['prezime'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-            //Verifikacioni mejl
-            $url=URL::temporarySignedRoute(
-                'verification.verify',
-                now()->addMinutes(60), //Token vazi 60 minuta
-                ['id' => $user->id]
-            );
-           // $url = url('/api/email/verify/' . $user->id);
-            Mail::to($user->email)->send(new VerifyEmail($user, $url));
+        // Verifikacioni mejl
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60), // Token vazi 60 minuta
+            ['id' => $user->id]
+        );
+        // $url = url('/api/email/verify/' . $user->id);
+        Mail::to($user->email)->send(new VerifyEmail($user, $url));
 
-            return response()->json([
-                'message' => 'Registracija uspesna',
-                'user' => $user,
-            ], 201);
-        
-    }   
+        return response()->json([
+            'message' => 'Registracija uspesna',
+            'user' => $user,
+        ], 201);
 
-    //LOGIN
+    }
+
+    // LOGIN
 
     public function login(Request $request)
     {
@@ -69,24 +67,23 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation errors',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-         // Da li u bazi postoji korisnik sa unetim email-om i lozinkom
-        if(!Auth::attempt($validator->validated())) {
+        // Da li u bazi postoji korisnik sa unetim email-om i lozinkom
+        if (! Auth::attempt($validator->validated())) {
             return response()->json([
-                'message' => 'Pogresan email ili lozinka'
+                'message' => 'Pogresan email ili lozinka',
             ], 401);
         }
 
         $user = Auth::user();
-        if($user->email_verified_at==null) {
+        if ($user->email_verified_at == null) {
             return response()->json([
-                'message' => 'Email adresa nije verifikovana.'
+                'message' => 'Email adresa nije verifikovana.',
             ], 400);
         }
-
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -97,7 +94,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    //LOGOUT
+    // LOGOUT
 
     public function logout(Request $request)
     {
@@ -105,7 +102,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Uspesno odjavljivanje'
+            'message' => 'Uspesno odjavljivanje',
         ], 200);
     }
 
@@ -117,17 +114,17 @@ class AuthController extends Controller
     public function verifyEmail(Request $request, $id)
     {
 
-         if(!request()->hasValidSignature()) {
+        if (! request()->hasValidSignature()) {
             return response()->json([
-                'message' => 'Verifikacioni link nije validan ili je istekao.'
+                'message' => 'Verifikacioni link nije validan ili je istekao.',
             ], 400);
-        }  
+        }
 
         $user = User::findOrFail($id);
 
-        if($user->email_verified_at) {
+        if ($user->email_verified_at) {
             return response()->json([
-                'message' => 'Email adresa je vec verifikovana.'
+                'message' => 'Email adresa je vec verifikovana.',
             ], 400);
         }
 
@@ -135,7 +132,7 @@ class AuthController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => 'Email adresa je uspesno verifikovana.'
+            'message' => 'Email adresa je uspesno verifikovana.',
         ], 200);
     }
 }

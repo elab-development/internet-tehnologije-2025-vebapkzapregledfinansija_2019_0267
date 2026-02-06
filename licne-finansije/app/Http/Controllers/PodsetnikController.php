@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PodsetnikResource;
 use App\Models\Podsetnik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\PodsetnikResource;
 
 class PodsetnikController extends Controller
 {
@@ -34,15 +34,16 @@ class PodsetnikController extends Controller
             'idKorisnik' => 'required|integer|exists:users,id',
             'opis' => 'nullable|string',
             'datumVreme' => 'required|date',
-            'status' => 'required|string'
+            'status' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);    
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $podsetnik = Podsetnik::create($data);
+
         return response()->json(new PodsetnikResource($podsetnik), 200);
     }
 
@@ -72,15 +73,16 @@ class PodsetnikController extends Controller
             'idKorisnik' => 'sometimes|required|integer|exists:users,id',
             'opis' => 'sometimes|nullable|string',
             'datumVreme' => 'sometimes|required|date',
-            'status' => 'sometimes|required|string'
+            'status' => 'sometimes|required|string',
         ]);
         if ($validator->fails()) {
             return response()->json([
-            'message' => 'Validacija nije prosla', 
-            'errors' => $validator->errors()], 422);    
+                'message' => 'Validacija nije prosla',
+                'errors' => $validator->errors()], 422);
         }
         $data = $validator->validated();
         $podsetnik->update($data);
+
         return response()->json(new PodsetnikResource($podsetnik), 200);
     }
 
@@ -92,6 +94,7 @@ class PodsetnikController extends Controller
         $podsetnik = Podsetnik::find($id);
         if ($podsetnik) {
             $podsetnik->delete();
+
             return response()->json(['message' => 'Podsetnik je obrisan'], 200);
         } else {
             return response()->json(['message' => 'Podsetnik nije pronadjen'], 404);

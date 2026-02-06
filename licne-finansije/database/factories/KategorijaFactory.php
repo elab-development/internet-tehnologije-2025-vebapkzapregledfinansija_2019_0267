@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\TipTransakcije;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Kategorija>
@@ -21,6 +21,7 @@ class KategorijaFactory extends Factory
 
         $prihod = ['Plata', 'Poklon', 'Bonus', 'Stipendija', 'Ostalo'];
         $rashod = ['Hrana', 'Stanovanje', 'Računi', 'Prevoz', 'Zdravstvo', 'Obrazovanje', 'Zabava', 'Odeća', 'Ostalo'];
+
         return [
             'naziv' => fake()->randomElement($tip === 'prihod' ? $prihod : $rashod),
             'opis' => fake()->sentence(),
