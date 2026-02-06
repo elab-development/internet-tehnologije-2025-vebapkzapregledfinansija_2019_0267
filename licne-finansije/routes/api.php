@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //Budzet rute
 Route::get('/budzeti', [BudzetController::class, 'index']);
+Route::get('/budzeti/korisnik/{id}', [BudzetController::class, 'userBudgets']);
 Route::get('/budzeti/{id}', [BudzetController::class, 'show']);
 Route::post('/budzeti', [BudzetController::class, 'store']);
 Route::delete('/budzeti/{id}', [BudzetController::class, 'destroy']);

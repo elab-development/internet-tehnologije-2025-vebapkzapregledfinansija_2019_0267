@@ -9,7 +9,7 @@ max-width: 1200px;
 margin: 0 auto;
 padding: 4rem 1.5rem;
 display: grid;
-grid-template-columns: 1fr 1fr;
+grid-template-columns: 300px 1fr;
 gap: 3rem;
 }
 
@@ -56,6 +56,8 @@ background: white;
 border-radius: 20px;
 padding: 1.5rem;
 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+width: 100%;
+box-sizing: border-box;
 }
 
 .balance {
@@ -120,4 +122,36 @@ margin-bottom: 1rem;
 .feature-card ul {
 padding-left: 1.2rem;
 color: #475569;
+}
+
+select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.summary-card input,
+.summary-card select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Stilizuje dugme unutar .summary-card */
+.summary-card button {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  background-color: #059669;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }

@@ -18,6 +18,14 @@ class BudzetController extends Controller
         return BudzetResource::collection(Budzet::all());
     }
 
+
+    // GET /budzeti/korisnik/{id}
+    public function userBudgets($idKorisnik)
+    {
+        $budzeti = Budzet::where('idKorisnik', $idKorisnik)->get();
+        return BudzetResource::collection($budzeti);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -50,7 +58,7 @@ class BudzetController extends Controller
         //PROSLA JE VALIDACIJA
         $data = $validator->validated();
         $budzet = Budzet::create($data);
-        return response()->json($budzet, 201);
+        return response()->json(new BudzetResource($budzet), 201);
     }
     /**
      * Display the specified resource.

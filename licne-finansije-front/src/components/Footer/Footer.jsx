@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer">
         <div className="footer-container">
-            <p>© {new Date().getFullYear()} FinTrack. Sva prava zadrzana.</p>
+            <p>© {new Date().getFullYear()} Kićanović. Sva prava zadrzana.</p>
             <div className="footer-links">
                 <a href="#">Politika privatnosti</a>
                 <a href="#">Uslovi koriscenja</a>

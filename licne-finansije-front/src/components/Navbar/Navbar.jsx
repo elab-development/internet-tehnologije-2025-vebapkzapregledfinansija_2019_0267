@@ -37,7 +37,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
         <div className="navbar-container">
-            <span className="logo" onClick={() => navigate("/")} style={{cursor: "pointer"}}>FinTrack</span>
+            <span className="logo" onClick={() => navigate("/")} style={{cursor: "pointer"}}>Kićanović.</span>
             <div className="nav-actions">
 
               {isAuth ? (

@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Pocetna from './pages/Pocetna';
 import LoginPage from './pages/Login/LoginPage';
+import Budzet from './pages/Budzet';
 import Proba from './pages/Proba';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationPage />} />
         <Route path="/proba" element={<Proba />} />
+        <Route path="/budzet" element={<Budzet />} />
         
       </Routes>
       <Footer></Footer>

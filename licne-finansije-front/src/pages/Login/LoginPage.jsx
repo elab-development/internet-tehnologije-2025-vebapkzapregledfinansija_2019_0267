@@ -33,7 +33,7 @@ const LoginPage = () => {
             setInfo(message || "Uspešno logovanje");
             setLoading(false);
             setTimeout(() => {
-                navigate("/proba");
+                navigate("/budzet");
             }, 1000);
         } catch (err) {
             setLoading(false);
@@ -53,7 +53,6 @@ const LoginPage = () => {
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
         <h2>Login</h2>
-        {error && <p className="error">{error}</p>}
         <input
           type="email"
           placeholder="Email"
