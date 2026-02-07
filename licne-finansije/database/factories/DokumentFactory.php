@@ -17,6 +17,7 @@ class DokumentFactory extends Factory
      */
     public function definition(): array
     {
+        $ext = fake()->randomElement(['pdf','docx','xlsx','jpg','jpeg','png']);
         return [
             'transakcija_id' => Transakcija::factory(),
             'naziv' => fake()->word().'.pdf',

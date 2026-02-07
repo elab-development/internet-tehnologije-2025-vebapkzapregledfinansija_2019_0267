@@ -33,10 +33,11 @@ class DokumentController extends Controller
         $validator = Validator::make($request->all(), [
             'idTransakcija' => 'required|integer|exists:transakcije,id',
             'nazivFajla' => 'required|string|max:255',
-            'datumDodavanja' => 'required|datetime',
-            'putanja' => 'required|string|max:255',
-            'tip' => 'required|string|max:50',
+            'datumDodavanja' => 'required|date',
+            'putanja' => 'required|file|mimes:jpg,jpeg,png,pdf,docx,xlsx|max:5120',
         ]);
+
+       
 
         // NIJE PROSLA VALIDACIJA
         if ($validator->fails()) {
@@ -46,6 +47,16 @@ class DokumentController extends Controller
         }
         // PROSLA JE VALIDACIJA
         $data = $validator->validated();
+
+         if ($request->hasFile('putanja')) {
+             $file = $request->file('putanja');
+             $path = $file->store('documents', 'public');
+             $data['putanja'] = $path;
+             $data['tip'] = $file->getClientOriginalExtension();
+         }
+         
+     //   $data['transakcija_id'] = $data['idTransakcija'];
+     //   unset($data['idTransakcija']);
         $dokument = Dokument::create($data);
 
         return response()->json(new DokumentResource($dokument), 200);

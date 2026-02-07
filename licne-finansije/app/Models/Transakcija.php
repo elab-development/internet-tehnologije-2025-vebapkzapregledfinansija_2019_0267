@@ -40,6 +40,6 @@ class Transakcija extends Model
 
     public function dokumenti()
     {
-        return $this->hasMany(Dokument::class, 'idTransakcija');
+        return $this->hasMany(Dokument::class,'idTransakcija');
     }
 }

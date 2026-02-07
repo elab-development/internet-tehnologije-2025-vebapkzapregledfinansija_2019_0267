@@ -29,6 +29,35 @@ class Dokument extends Model
         return $this->belongsTo(Transakcija::class, 'idTransakcija');
     }
 
+    public function setIdTransakcijaAttribute($value)
+    {
+        $this->attributes['transakcija_id'] = $value;
+    }
+        public function getIdTransakcijaAttribute() 
+    {
+        return $this->attributes['transakcija_id'];
+    }
+
+     public function setNazivFajlaAttribute($value)
+    {
+        $this->attributes['naziv'] = $value;
+    }
+
+     public function getNazivFajlaAttribute()
+    {
+        return $this->attributes['naziv'];
+    }
+
+    public function setDatumDodavanjaAttribute($value)
+    {
+        $this->attributes['datum'] = $value;
+    }
+
+    public function getDatumDodavanjaAttribute()
+    {
+        return $this->attributes['datum'];
+    }
+
     //  public function korisnik()
     // {
     //     return $this->belongsTo(User::class,'idKorisnik');
