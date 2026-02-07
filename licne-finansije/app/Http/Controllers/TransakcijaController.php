@@ -93,7 +93,7 @@ class TransakcijaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($id)  
     {
         $transakcija = Transakcija::find($id);
         if ($transakcija) {
@@ -222,5 +222,43 @@ class TransakcijaController extends Controller
         $paginator = $query->paginate($perPage);
 
         return TransakcijaResource::collection($paginator);
+    }
+
+    public function exportCsv (Request $request) {
+        $userId = $request->user()->id;
+
+        $transakcije = Transakcija::with('dokumenti')
+        ->where('idKorisnik', $userId)
+        ->orderBy('datum_vreme', 'asc')
+        ->get();
+
+        $columns = ['ID', 'Datum i vreme', 'Tip transakcije', 'Iznos', 'Valuta', 'Opis', 'Dokument'];
+
+        $callback = function() use ($transakcije, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns, ';');
+
+            foreach ($transakcije as $transakcija) {
+                $dokument = $transakcija->dokument ? $transakcija->dokument->nazivFajla : 'Ne postoji dokument';
+                fputcsv($file, [
+                    $transakcija->id,
+                    $transakcija->datum_vreme,
+                    $transakcija->tipTransakcije->value,
+                    $transakcija->iznos,
+                    $transakcija->valuta,
+                    $transakcija->opis,
+                    $dokument
+                ]);
+            }
+
+            fclose($file);
+        };
+
+       $filename = 'transakcije_' . $userId . '_' . now()->format('Y-m-d') . '.csv';
+
+        return response()->streamDownload($callback, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
     }
 }

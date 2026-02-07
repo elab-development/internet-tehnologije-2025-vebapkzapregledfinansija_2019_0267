@@ -19,7 +19,7 @@ class TransakcijaResource extends JsonResource
             'idKategorija' => $this->idKategorija,
             'kategorija' => $this->kategorija,
             'datumVreme' => $this->datum_vreme ? $this->datum_vreme->format('d.m.Y. H:i:s') : null,
-            'tipTransakcije' => $this->tipTransakcije,
+            'tipTransakcije' => $this->tipTransakcije->value,
             'iznos' => $this->iznos,
             'valuta' => $this->valuta, 
         ];

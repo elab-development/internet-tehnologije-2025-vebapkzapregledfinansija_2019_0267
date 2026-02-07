@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/transakcije/prihodi-paginacija-filter', [TransakcijaController::class, 'mojiPrihodiPaginacijaFilter']);
     Route::get('/transakcije/rashodi-paginacija-filter', [TransakcijaController::class, 'mojiRashodiPaginacijaFilter']);
+
+    Route::get('/transakcije/export', [TransakcijaController::class, 'exportCsv']);
     
     // potencijalno zastiti i jos neke rute
 });
