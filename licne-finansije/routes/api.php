@@ -34,7 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/transakcije/export', [TransakcijaController::class, 'exportCsv']);
     
-    // potencijalno zastiti i jos neke rute
 });
 
 // Budzet rute

@@ -7,47 +7,47 @@ import PasswordInput from '../../components/PasswordInput';
 
 const LoginPage = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [email, setEmail] = useState('vasilijegogic29@gmail.com');
-    const [password, setPassword] = useState('vaske123');
+  const [email, setEmail] = useState('vasilijegogic29@gmail.com');
+  const [password, setPassword] = useState('vaske123');
 
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [info, setInfo] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [info, setInfo] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setInfo('');
-        setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setInfo('');
+    setLoading(true);
 
-        try {
-            const response = await api.post("/login", { email, password });
-            const {token, user, message} =response.data;
+    try {
+      const response = await api.post("/login", { email, password });
+      const { token, user, message } = response.data;
 
-            //UPISIVANJE TOKENA I KORISNICKIH PODATAKA U LOCAL STORAGE
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+      //UPISIVANJE TOKENA I KORISNICKIH PODATAKA U LOCAL STORAGE
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-            setInfo(message || "Uspešno logovanje");
-            setLoading(false);
-            setTimeout(() => {
-                navigate("/budzet");
-            }, 1000);
-        } catch (err) {
-            setLoading(false);
-            console.log(err);
-           if(err.response.status === 401){
-            setError("Neispravni kredencijali");
-           } else if (err.response.status === 422){
-            setError("Neispravni podaci");
-              } else {
-            setError("Došlo je do greške. Pokušajte ponovo.");
-            } 
-        }
-
+      setInfo(message || "Uspešno logovanje");
+      setLoading(false);
+      setTimeout(() => {
+        navigate("/budzet");
+      }, 1000);
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+      if (err.response.status === 401) {
+        setError("Neispravni kredencijali");
+      } else if (err.response.status === 422) {
+        setError("Neispravni podaci");
+      } else {
+        setError("Došlo je do greške. Pokušajte ponovo.");
+      }
     }
+
+  }
 
   return (
     <div className="login-container">
@@ -57,7 +57,9 @@ const LoginPage = () => {
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)} //svaki put kada se promeni input, azurira se stanje emaila; kreira se event objekat koji sadrzi informacije o promeni, 
+          // a zatim se koristi setEmail funkcija da se azurira stanje emaila sa novom vrednoscu iz inputa; target je ono na sta smo kliknuli, a .value je nova vrednost tog polja; 
+          //  ovo omogucava da se stanje emaila u komponenti odrzi sinhronizovanim sa vrednoscu unetom u input polje
           required
         />
         {/* <input
@@ -72,9 +74,9 @@ const LoginPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-       
-            {info && <div className="info">{info}</div>}
-            {error && <div className="error-popup">{error}</div>}
+
+        {info && <div className="info">{info}</div>}
+        {error && <div className="error-popup">{error}</div>}
 
         <button type="submit" disabled={loading}>
           {loading ? "Prijavljivanje..." : "Prijavi se"}
