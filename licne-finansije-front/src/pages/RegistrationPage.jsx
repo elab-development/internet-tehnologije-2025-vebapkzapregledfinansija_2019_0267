@@ -6,50 +6,74 @@ import PasswordInput from '../components/PasswordInput';
 import PrimaryButton from '../components/PrimaryButton';
 import api from '../api/api';
 import './Login/LoginPage.css';
+import FileInput from '../components/FileInput';
+
+
 
 const RegistrationPage = () => {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [ime, setIme] = useState("");
-    const [prezime, setPrezime] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const[passwordConfirm, setPasswordConfirm] = useState("");
+  const [ime, setIme] = useState("");
+  const [prezime, setPrezime] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [slika, setSlika] = useState(null);
 
-    const [error, setError] = useState('');
-    const [info, setInfo] = useState('');
-    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setInfo('');
-        setLoading(true);
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
 
-        try {
-            const response = await api.post("/register", { 
-                ime, 
-                prezime, 
-                email, 
-                password, 
-                password_confirmation:passwordConfirm 
-            });
+    if (!selectedFile) return;
+    setSlika(selectedFile);
+  };
+  //const handleFileChange = (e) => {
+  // setSlika(e.target.files[0]);
+  // }
 
-            console.log(response.data);
-            setInfo(response.data.message || "Uspešna registracija");
-            setLoading(false);
+  const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+  const [loading, setLoading] = useState(false);
 
-            setTimeout(() => {
-                navigate("/login");
-            }, 1000);
-        } 
-        catch (err) {
-            setLoading(false);
-            setError(err.response?.data?.message || "Greška prilikom registracije");
-        
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setInfo('');
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("ime", ime);
+      formData.append("prezime", prezime);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("password_confirmation", passwordConfirm);
+
+      if (slika) {
+        formData.append("slika", slika);
+      }
+
+      const response = await api.post("/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
         }
+      });
+
+      console.log(response.data);
+      setInfo(response.data.message || "Uspešna registracija");
+      setLoading(false);
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     }
+    catch (err) {
+      setLoading(false);
+      setError(err.response?.data?.message || "Greška prilikom registracije");
+
+    }
+  }
   return (
     <div className="login-container">
       <form className="login-form" onSubmit={handleSubmit}>
@@ -89,6 +113,15 @@ const RegistrationPage = () => {
           value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
         />
+
+        <FileInput
+          placeholder="Profilna slika"
+          accept="image/png, image/jpeg, image/jpg"
+          onChange={handleFileChange}
+        />
+        <small className="file-input-hint">Dozvoljeni formati: PNG, JPEG, JPG. Maksimalno 2MB. </small>
+
+        <small className="file-input-hint">Dozvoljeni formati: PNG, JPEG, JPG. Maksimalno 2MB. </small>
 
         {info && <div className="info">{info}</div>}
         {error && <div className="error-popup">{error}</div>}
