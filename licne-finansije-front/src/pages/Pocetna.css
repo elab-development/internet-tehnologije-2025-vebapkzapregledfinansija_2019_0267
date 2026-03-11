@@ -155,3 +155,35 @@ select {
   font-weight: 500;
   margin-top: 0.5rem;
 }
+
+
+.date-input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.react-datepicker {
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.react-datepicker__header {
+  background-color: #059669;
+  border-bottom: none;
+}
+
+.react-datepicker__current-month {
+  color: white;
+}
+
+.react-datepicker__day--selected {
+  background-color: #059669;
+}
+
+.react-datepicker__navigation {
+  display: none !important;
+}

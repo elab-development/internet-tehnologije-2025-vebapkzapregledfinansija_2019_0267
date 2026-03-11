@@ -15,6 +15,7 @@ class FinansijskiCiljResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'idCilj' => $this->id,
             'idKorisnik' => $this->idKorisnik,
             'naziv' => $this->naziv,
             'ciljni_iznos' => $this->ciljni_iznos,

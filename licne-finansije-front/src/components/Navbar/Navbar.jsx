@@ -42,11 +42,23 @@ const Navbar = () => {
 
               {isAuth ? (
                 <>
-                  <button 
+                  {/* <button 
                   className="btn secondary"
                   //ZAMENITI ODGOVARAJUCOM STRANICOM KADA SE NAPRAVI
                   onClick={() => navigate("/proba")}>
                     Proba
+                  </button> */}
+
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/budzet")}>
+                    Budžet
+                  </button>
+
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/finansijski-cilj")}>
+                    Finansijski cilj
                   </button>
 
                   <button

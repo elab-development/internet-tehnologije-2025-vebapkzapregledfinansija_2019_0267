@@ -52,11 +52,12 @@ Route::delete('/kategorije/{id}', [KategorijaController::class, 'destroy']);
 Route::put('/kategorije/{id}', [KategorijaController::class, 'update']);
 
 // Finansijski cilj rute
-Route::get('/finansijski_ciljevi', [FinansijskiCiljController::class, 'index']);
-Route::get('/finansijski_ciljevi/{id}', [FinansijskiCiljController::class, 'show']);
-Route::post('/finansijski_ciljevi', [FinansijskiCiljController::class, 'store']);
-Route::delete('/finansijski_ciljevi/{id}', [FinansijskiCiljController::class, 'destroy']);
-Route::put('/finansijski_ciljevi/{id}', [FinansijskiCiljController::class, 'update']);
+Route::get('/finansijski-ciljevi', [FinansijskiCiljController::class, 'index']);
+Route::get('/finansijski-ciljevi/{id}', [FinansijskiCiljController::class, 'show']);
+Route::get('/finansijski-ciljevi/korisnik/{id}', [FinansijskiCiljController::class, 'userFinancialGoals']);
+Route::post('/finansijski-ciljevi', [FinansijskiCiljController::class, 'store']);
+Route::delete('/finansijski-ciljevi/{id}', [FinansijskiCiljController::class, 'destroy']);
+Route::put('/finansijski-ciljevi/{id}', [FinansijskiCiljController::class, 'update']);
 
 // Dokument rute
 Route::resource('/dokumenti', DokumentController::class);

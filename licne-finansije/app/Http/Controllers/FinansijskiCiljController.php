@@ -17,9 +17,14 @@ class FinansijskiCiljController extends Controller
         return FinansijskiCiljResource::collection(FinansijskiCilj::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    //GET /finansijski-ciljevi/korisnik/{id}
+    public function userFinancialGoals($idKorisnik)
+    {
+        $ciljevi = FinansijskiCilj::where('idKorisnik', $idKorisnik)->get();
+
+        return FinansijskiCiljResource::collection($ciljevi);
+    }
+
     public function create()
     {
         //
