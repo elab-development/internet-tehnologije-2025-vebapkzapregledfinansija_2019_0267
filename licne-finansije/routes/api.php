@@ -77,6 +77,7 @@ Route::put('/transakcije/{id}', [TransakcijaController::class, 'update']);
 // Podsetnik rute
 Route::get('/podsetnici', [PodsetnikController::class, 'index']);
 Route::get('/podsetnici/{id}', [PodsetnikController::class, 'show']);
+Route::get('/podsetnici/korisnik/{id}', [PodsetnikController::class, 'userReminders']);
 Route::post('/podsetnici', [PodsetnikController::class, 'store']);
 Route::delete('/podsetnici/{id}', [PodsetnikController::class, 'destroy']);
 Route::put('/podsetnici/{id}', [PodsetnikController::class, 'update']);

@@ -6,6 +6,7 @@ import LoginPage from './pages/Login/LoginPage';
 import Budzet from './pages/Budzet';
 import Proba from './pages/Proba';
 import FinansijskiCilj from './pages/FinansijskiCilj';
+import Podsetnik from './pages/Podsetnik';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import RegistrationPage from './pages/RegistrationPage';
@@ -23,7 +24,8 @@ function App() {
         <Route path="/proba" element={<Proba />} />
         <Route path="/budzet" element={<Budzet />} />
         <Route path="/finansijski-cilj" element={<FinansijskiCilj />} />
-        
+        <Route path="/podsetnik" element={<Podsetnik />} />
+
       </Routes>
       <Footer></Footer>
      </BrowserRouter>

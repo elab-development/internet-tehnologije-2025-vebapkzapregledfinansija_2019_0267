@@ -61,6 +61,12 @@ const Navbar = () => {
                     Finansijski cilj
                   </button>
 
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/podsetnik")}>
+                    Podsetnik
+                  </button>
+
                   <button
                     className="btn primary"
                     onClick={handleLogout}>Odjava</button>    

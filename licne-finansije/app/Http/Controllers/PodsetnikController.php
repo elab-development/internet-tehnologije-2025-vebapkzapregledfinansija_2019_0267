@@ -17,6 +17,13 @@ class PodsetnikController extends Controller
         return PodsetnikResource::collection(Podsetnik::all());
     }
 
+    //GET /podsetnici/korisnik/{id}
+    public function userReminders($idKorisnik)
+    {
+        $podsetnici = Podsetnik::where('idKorisnik', $idKorisnik)->get();
+        return PodsetnikResource::collection($podsetnici);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -33,8 +40,8 @@ class PodsetnikController extends Controller
         $validator = Validator::make($request->all(), [
             'idKorisnik' => 'required|integer|exists:users,id',
             'opis' => 'nullable|string',
-            'datumVreme' => 'required|date',
-            'status' => 'required|string',
+            'datum_vreme' => 'required|date',
+            'status' => 'required|integer',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -72,8 +79,8 @@ class PodsetnikController extends Controller
         $validator = Validator::make($request->all(), [
             'idKorisnik' => 'sometimes|required|integer|exists:users,id',
             'opis' => 'sometimes|nullable|string',
-            'datumVreme' => 'sometimes|required|date',
-            'status' => 'sometimes|required|string',
+            'datum_vreme' => 'sometimes|required|date',
+            'status' => 'sometimes|required|integer',
         ]);
         if ($validator->fails()) {
             return response()->json([

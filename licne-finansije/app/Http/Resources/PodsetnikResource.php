@@ -15,9 +15,10 @@ class PodsetnikResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'idPodsetnik' => $this->id,
             'idKorisnik' => $this->idKorisnik,
             'opis' => $this->opis,
-            'datum_vreme' => $this->datum_vreme->format('d.m.Y. H:i:s'),
+            'datum_vreme' => $this->datum_vreme->format('c'),
             'status' => $this->status,
             'status_text' => $this->status ? 'Aktivan' : 'Neaktivan',
         ];
