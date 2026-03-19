@@ -17,6 +17,14 @@ class KategorijaController extends Controller
         return KategorijaResource::collection(Kategorija::all());
     }
 
+
+    //GET /kategorije/korisnik/{id}
+    public function userCategories($idKorisnik)
+    {
+        $kategorije = Kategorija::where('idKorisnik', $idKorisnik)->get();
+        return KategorijaResource::collection($kategorije);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -31,6 +39,7 @@ class KategorijaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'idKorisnik' => 'required|integer|exists:users,id',
             'naziv' => 'required|string|max:100',
             'opis' => 'nullable|string|max:255',
         ]);

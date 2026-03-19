@@ -67,6 +67,13 @@ const Navbar = () => {
                     Podsetnik
                   </button>
 
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/kategorija")}>
+                    Kategorija
+                  </button>
+
+
                   <button
                     className="btn primary"
                     onClick={handleLogout}>Odjava</button>    

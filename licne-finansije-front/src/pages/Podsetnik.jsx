@@ -133,12 +133,18 @@ const Podsetnik = () => {
                        value={datum}
                        onChange={(date) => setDatum(date)}
                     />
-                    <input
-                       type="checkbox"
-                       label="Status"
-                       checked={status}
-                       onChange={(e) => setStatus(e.target.checked)}
-                    />
+                    
+                    <label style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                        <input
+                            type="checkbox"
+                            id="status"
+                            checked={status}
+                            onChange={(e) => setStatus(e.target.checked)}
+                        />
+                        Status
+                    </label>
+
+                        
                     {info && <div className="info">{info}</div>}
                     {error && <div className="error-popup">{error}</div>}
                     {loading && <p>Učitavanje...</p>}

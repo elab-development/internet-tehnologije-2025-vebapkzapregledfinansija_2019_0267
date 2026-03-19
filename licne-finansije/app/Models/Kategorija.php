@@ -12,6 +12,7 @@ class Kategorija extends Model
     protected $table = 'kategorije';
 
     protected $fillable = [
+        'idKorisnik',
         'idKategorija',
         'naziv',
         'opis',
@@ -21,5 +22,10 @@ class Kategorija extends Model
     public function transakcije()
     {
         return $this->hasMany(Transakcija::class, 'idKategorija');
+    }
+
+    public function korisnik()
+    {
+        return $this->belongsTo(User::class, 'idKorisnik');
     }
 }

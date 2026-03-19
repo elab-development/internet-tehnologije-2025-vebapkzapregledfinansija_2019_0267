@@ -46,6 +46,7 @@ Route::put('/budzeti/{id}', [BudzetController::class, 'update']);
 
 // Kategorija rute
 Route::get('/kategorije', [KategorijaController::class, 'index']);
+Route::get('/kategorije/korisnik/{id}', [KategorijaController::class, 'userCategories']);
 Route::get('/kategorije/{id}', [KategorijaController::class, 'show']);
 Route::post('/kategorije', [KategorijaController::class, 'store']);
 Route::delete('/kategorije/{id}', [KategorijaController::class, 'destroy']);
