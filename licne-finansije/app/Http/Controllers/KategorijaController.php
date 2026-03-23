@@ -18,7 +18,7 @@ class KategorijaController extends Controller
     }
 
 
-    //GET /kategorije/korisnik/{id}
+    //GET/kategorije/korisnik/{id}
     public function userCategories($idKorisnik)
     {
         $kategorije = Kategorija::where('idKorisnik', $idKorisnik)->get();

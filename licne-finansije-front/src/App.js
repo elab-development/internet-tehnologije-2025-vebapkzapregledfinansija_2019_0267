@@ -8,6 +8,7 @@ import Proba from './pages/Proba';
 import FinansijskiCilj from './pages/FinansijskiCilj';
 import Podsetnik from './pages/Podsetnik';
 import Kategorija from './pages/Kategorija';
+import Transakcija from './pages/Transakcija';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import RegistrationPage from './pages/RegistrationPage';
@@ -27,6 +28,7 @@ function App() {
         <Route path="/finansijski-cilj" element={<FinansijskiCilj />} />
         <Route path="/podsetnik" element={<Podsetnik />} />
         <Route path="/kategorija" element={<Kategorija />} />
+        <Route path="/transakcija" element={<Transakcija />} />
       </Routes>
       <Footer></Footer>
      </BrowserRouter>

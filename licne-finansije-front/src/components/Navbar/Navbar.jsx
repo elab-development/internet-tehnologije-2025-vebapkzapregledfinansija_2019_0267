@@ -73,6 +73,12 @@ const Navbar = () => {
                     Kategorija
                   </button>
 
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/transakcija")}>
+                    Transakcija
+                  </button>
+
 
                   <button
                     className="btn primary"

@@ -74,6 +74,9 @@ Route::get('/transakcije/{id}', [TransakcijaController::class, 'show']);
 Route::post('/transakcije', [TransakcijaController::class, 'store']);
 Route::delete('/transakcije/{id}', [TransakcijaController::class, 'destroy']);
 Route::put('/transakcije/{id}', [TransakcijaController::class, 'update']);
+Route::get('/transakcije/korisnik/{id}', [TransakcijaController::class, 'userTransactions']);
+Route::get('/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}', [TransakcijaController::class, 'userCategoryTransactions']);
+
 
 // Podsetnik rute
 Route::get('/podsetnici', [PodsetnikController::class, 'index']);

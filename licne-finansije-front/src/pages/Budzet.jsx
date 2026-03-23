@@ -135,6 +135,7 @@ const Budzet = () => {
 
           <form onSubmit={handleSubmit}>
             <SelectInput
+              label="Mesec:"
               value={mesec}
               onChange={(e) => setMesec(e.target.value)}
               options={months}
@@ -168,7 +169,7 @@ const Budzet = () => {
         <div className="features-grid">
           {budgets.filter(b => b && b.mesec !== undefined).map((b) => (
             <div className="feature-card" key={b.idBudzet}>
-              <h3>{months.find(m => m.value === b.mesec)?.label} {b.godina}</h3>
+              <h3>{months.find(m => m.value === Number(b.mesec))?.label} {b.godina}</h3>
               <p>Limit: {b.limit}</p>
               <p>Potrošeno: {b.potroseno}</p>
 

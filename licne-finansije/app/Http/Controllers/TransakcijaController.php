@@ -17,6 +17,23 @@ class TransakcijaController extends Controller
         return TransakcijaResource::collection(Transakcija::all());
     }
 
+    //GET/transakcije/korisnik/{id}
+    public function userTransactions($idKorisnik)
+    {
+        $transakcije = Transakcija::where('idKorisnik', $idKorisnik)->get();
+        return TransakcijaResource::collection($transakcije);
+    }
+
+    //GET/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}
+    public function userCategoryTransactions($idKorisnik, $idKategorija)
+    {
+        $transakcije = Transakcija::where('idKorisnik', $idKorisnik)
+            ->where('idKategorija', $idKategorija)
+            ->get();
+        return TransakcijaResource::collection($transakcije);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -34,9 +51,10 @@ class TransakcijaController extends Controller
             'idKorisnik' => 'required|integer|exists:users,id',
             'idKategorija' => 'required|integer|exists:kategorije,id',
             'iznos' => 'required|numeric',
-            'datumVreme' => 'required|date',
-            'tipTransakcije' => 'required|string|in:prihod,rashod',
+            'datum_vreme' => 'required|date',
+            'tipTransakcije' => 'required|string|in:PRIHOD,RASHOD',
             'valuta' => 'required|string|max:3',
+            'opis' => 'nullable|string|max:255',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -75,9 +93,10 @@ class TransakcijaController extends Controller
             'idKorisnik' => 'sometimes|required|integer|exists:users,id',
             'idKategorija' => 'sometimes|required|integer|exists:kategorije,id',
             'iznos' => 'sometimes|required|numeric',
-            'datumVreme' => 'sometimes|required|date',
-            'tipTransakcije' => 'sometimes|required|string|in:prihod,rashod',
+            'datum_vreme' => 'sometimes|required|date',
+            'tipTransakcije' => 'sometimes|required|string|in:PRIHOD,RASHOD',
             'valuta' => 'sometimes|required|string|max:3',
+            'opis' => 'nullable|string|max:255',
         ]);
         if ($validator->fails()) {
             return response()->json([

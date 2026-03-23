@@ -15,7 +15,7 @@ class Transakcija extends Model
     protected $fillable = [
         'idKorisnik',
         'idKategorija',
-        'datumVreme',
+        'datum_vreme',
         'tipTransakcije',
         'iznos',
         'opis',
