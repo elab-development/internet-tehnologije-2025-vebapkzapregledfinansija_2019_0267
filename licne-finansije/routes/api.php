@@ -76,7 +76,7 @@ Route::delete('/transakcije/{id}', [TransakcijaController::class, 'destroy']);
 Route::put('/transakcije/{id}', [TransakcijaController::class, 'update']);
 Route::get('/transakcije/korisnik/{id}', [TransakcijaController::class, 'userTransactions']);
 Route::get('/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}', [TransakcijaController::class, 'userCategoryTransactions']);
-
+Route::put('/transakcije/{id}/valuta', [TransakcijaController::class, 'updateValuta']);
 
 // Podsetnik rute
 Route::get('/podsetnici', [PodsetnikController::class, 'index']);

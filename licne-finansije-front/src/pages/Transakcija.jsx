@@ -34,6 +34,31 @@ const Transakcija = () => {
     const [valuta, setValuta] = useState('');
     const [opis, setOpis] = useState('');
 
+    //RAD SA IZBOROM VALUTE I KURSEVIMA
+    const [valute, setValute] = useState([]);
+    const [rates, setRates] = useState({});
+
+    useEffect(() => {
+        const fetchValute = async () => {
+            const res=await fetch("https://v6.exchangerate-api.com/v6/a885afe0ecbda562f260cbde/latest/USD");
+            const data = await res.json();
+            console.log("Valute response data:", data);
+            console.log("Valute:", Object.keys(data.conversion_rates));
+            setValute(Object.keys(data.conversion_rates));//ucitava kodove valuta
+            setRates(data.conversion_rates);//ucitava kurseve valuta u odnosu na USD
+        };
+        fetchValute();
+    }, []);
+
+    //Funkcija za konverziju iznosa iz jedne valute u drugu
+    const convertIznos=(iznos, fromCurrency, toCurrency) => {
+        if(fromCurrency === toCurrency){
+            return iznos;
+        }
+        const rate = rates[toCurrency] / rates[fromCurrency];
+        return iznos * rate;
+    };
+
 
     //DA LI DA SE DOZVOLI IZMENA TRANSAKCIJE...
     const [editId, setEditId] = useState(null);
@@ -177,6 +202,14 @@ const Transakcija = () => {
         setEditId(transakcija.idTransakcija);
     }
 
+    const handlePromenaValute = async(transakcija) => {
+        console.log("Promena valute za transakciju:", transakcija);
+        await api.put(`/transakcije/${transakcija.idTransakcija}/valuta`, {
+            valuta: transakcija.valuta,
+            iznos: transakcija.iznos
+        });
+    }
+
 
 
 
@@ -221,18 +254,24 @@ const Transakcija = () => {
                         ]}
                         placeholder="Izaberite tip transakcije"
                     />
+
+                    <SelectInput
+                        label="Valuta:"
+                        value={valuta}
+                        onChange={(e) => setValuta(e.target.value)}
+                        options={[
+                            ...valute.map(v => ({ value: v, label: v }))
+                        ]}
+                        placeholder="Izaberite valutu"
+                    />
+
                     <TextInput
                         label="Iznos"
                         value={iznos}
                         onChange={(e) => setIznos(e.target.value)}
                         placeholder="Unesite iznos"
                     />
-                    <TextInput
-                        label="Valuta"
-                        value={valuta}
-                        onChange={(e) => setValuta(e.target.value)}
-                        placeholder="Unesite valutu"
-                    />
+                    
                     <DateInput
                         label="Datum i vreme"
                         value={datumVreme}
@@ -313,6 +352,30 @@ const Transakcija = () => {
                             <p>Datum: {new Date(transakcija.datum_vreme).toLocaleString()}</p>
                             <p>Opis: {transakcija.opis}</p>
 
+                            <div>
+                                <SelectInput
+                                    label="Promeni valutu:"
+                                    value={valuta}
+                                    onChange={(e) => {
+                                        const novaValuta = e.target.value;
+                                        const convertedIznos = convertIznos(transakcija.iznos, transakcija.valuta, e.target.value);
+                                        setTransakcije(prev =>
+                                            prev.map(t =>
+                                                t.idTransakcija === transakcija.idTransakcija
+                                                ? { ...t, iznos: convertedIznos.toFixed(2), valuta: novaValuta }
+                                                : t
+                                            )
+                                        );
+
+
+                                        handlePromenaValute({ ...transakcija, iznos: convertedIznos.toFixed(2), valuta: novaValuta });
+                                    }}
+                                    options={[
+                                        ...valute.map(v => ({ value: v, label: v }))
+                                    ]}
+                                    placeholder="Izaberite valutu"
+                                />
+                            </div>
                             <div className="hero-actions">
                                 <FiEdit className="edit-icon" onClick={() => handleEdit(transakcija)} />
                                 <FiTrash2 className="delete-icon" onClick={() => handleDelete(transakcija.idTransakcija)} />

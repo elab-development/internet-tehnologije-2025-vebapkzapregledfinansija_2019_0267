@@ -23,6 +23,7 @@ class TransakcijaResource extends JsonResource
             'tipTransakcije' => $this->tipTransakcije->value,
             'iznos' => $this->iznos,
             'valuta' => $this->valuta,
+            'opis' => $this->opis,
         ];
     }
 }

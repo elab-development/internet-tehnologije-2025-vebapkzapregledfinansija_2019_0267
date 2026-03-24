@@ -109,6 +109,15 @@ class TransakcijaController extends Controller
         return response()->json(new TransakcijaResource($transakcija), 200);
     }
 
+    public function updateValuta(Request $request, $id)
+    {
+        $transakcija= Transakcija::findOrFail($id);
+        $transakcija->valuta = $request->input('valuta');
+        $transakcija->iznos= $request->input('iznos');
+        $transakcija->save();   
+        return response()->json(new TransakcijaResource($transakcija), 200);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
