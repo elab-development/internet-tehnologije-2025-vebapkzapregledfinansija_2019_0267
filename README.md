@@ -26,9 +26,15 @@ Pre nego što pokreneš projekat, potrebno je da instaliraš:
      ``` 
      http://localhost/api
      
-5. React frontend će biti dostupan na:
+4. React frontend za produkciju će biti dostupan na:
      ```
      http://localhost
+
+5. React frontend za development će biti dostupan na:
+     ```
+     http://localhost:3000
+
+Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put kad se unese promena na frontendu. Zato svaki put kad se menja nesto na frontendu obavezno ponovo buildovati projekat nakon zavrsetka rada.
 
 ## 🔑 Podešavanja
 - U .env fajlu za Laravel podesi:
