@@ -26,6 +26,20 @@ services:
       - laravel
     networks:
       - app-network
+  
+  react:
+    build:
+      context: ./licne-finansije-front
+      dockerfile: Dockerfile.dev   # poseban Dockerfile za dev server
+    container_name: react-app
+    volumes:
+      - ./licne-finansije-front:/app
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    networks:
+      - app-network
 
   mysql:
     image: mysql:8.0
