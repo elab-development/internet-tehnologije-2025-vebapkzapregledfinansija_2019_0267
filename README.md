@@ -24,11 +24,11 @@ Pre nego što pokreneš projekat, potrebno je da instaliraš:
     docker compose up -d --build
 3. Laravel backend će biti dostupan na:
      ``` 
-     http://localhost:8000/api
+     http://localhost/api
      
 5. React frontend će biti dostupan na:
      ```
-     http://localhost:3000
+     http://localhost
 
 ## 🔑 Podešavanja
 - U .env fajlu za Laravel podesi:
@@ -43,13 +43,14 @@ Pre nego što pokreneš projekat, potrebno je da instaliraš:
 - Zatim pokrenuti komande:
     ```bash
     docker compose exec laravel-app composer install
+    docker compose exec laravel-app php artisan key:generate
     docker compose exec laravel-app php artisan config:clear
     docker compose exec laravel-app php artisan migrate
     docker compose exec laravel-app php artisan db:seed
 
 - Frontend koristi Axios sa baseURL:
     ```js
-    baseURL: 'http://localhost:8000/api'
+    baseURL: 'http://localhost/api'
 
 ## 📋 Funkcionalnosti
 - Registracija i prijava korisnika (JWT tokeni)
