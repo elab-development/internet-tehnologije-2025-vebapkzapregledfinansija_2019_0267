@@ -48,11 +48,10 @@ Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put k
     DB_PASSWORD=laravel
 - Zatim pokrenuti komande:
     ```bash
-    docker compose exec laravel-app composer install
-    docker compose exec laravel-app php artisan key:generate
-    docker compose exec laravel-app php artisan config:clear
-    docker compose exec laravel-app php artisan migrate
-    docker compose exec laravel-app php artisan db:seed
+    docker compose exec laravel php artisan key:generate
+    docker compose exec laravel php artisan config:clear
+    docker compose exec laravel php artisan migrate
+    docker compose exec laravel php artisan db:seed
 
 - Frontend koristi Axios sa baseURL:
     ```js
