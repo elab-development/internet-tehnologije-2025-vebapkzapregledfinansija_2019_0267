@@ -12,6 +12,7 @@ import Transakcija from './pages/Transakcija';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import RegistrationPage from './pages/RegistrationPage';
+import MojProfil from './pages/MojProfil';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/podsetnik" element={<Podsetnik />} />
         <Route path="/kategorija" element={<Kategorija />} />
         <Route path="/transakcija" element={<Transakcija />} />
+        <Route path="/moj-profil" element={<MojProfil />} />
       </Routes>
       <Footer></Footer>
      </BrowserRouter>
