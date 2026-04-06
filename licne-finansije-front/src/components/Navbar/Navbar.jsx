@@ -79,6 +79,12 @@ const Navbar = () => {
                     Transakcija
                   </button>
 
+                  <button 
+                  className="btn secondary"
+                  onClick={() => navigate("/moj-profil")}>
+                    Moj profil
+                  </button>
+
 
                   <button
                     className="btn primary"

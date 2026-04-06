@@ -21,7 +21,10 @@ Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
-    
+
+    Route::get('/korisnik', [UserController::class, 'getUser']);
+    Route::put('/korisnik', [UserController::class, 'updateProfile']);
+
     Route::get('/transakcije/pregled', [TransakcijaController::class, 'pregledTransakcija']);
     Route::get('/transakcije/prihodi', [TransakcijaController::class, 'mojiPrihodi']);
     Route::get('/transakcije/rashodi', [TransakcijaController::class, 'mojiRashodi']);
