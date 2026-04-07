@@ -53,6 +53,10 @@ Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put k
     docker compose exec laravel php artisan migrate
     docker compose exec laravel php artisan db:seed
 
+- Ako ne radi prva naredba, pokrenuti sledece:
+    ```bash
+    docker compose exec laravel composer install
+
 - Frontend koristi Axios sa baseURL:
     ```js
     baseURL: 'http://localhost/api'
