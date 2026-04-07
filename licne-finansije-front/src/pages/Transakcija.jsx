@@ -10,6 +10,8 @@ import PrimaryButton from '../components/PrimaryButton';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { set } from 'date-fns';
 import { format } from 'date-fns';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 
 
@@ -113,6 +115,38 @@ const Transakcija = () => {
         fetchKategorije();
         fetchTransakcije();
     }, [user.id]);
+
+
+    //rad sa pdf-om
+
+    const exportToPDF = (transakcije) => {
+        const doc = new jsPDF();
+
+        console.log("Exporting to PDF, transakcije:", transakcije);
+
+        doc.text("Transakcije", 14, 20);
+        
+        const table=transakcije.map(t => [
+            t.idTransakcija,
+            t.kategorija?.naziv || '',
+            t.datum_vreme,
+            t.tipTransakcije,
+            t.iznos.toLocaleString("sr-RS", { style: "currency", currency: t.valuta }),
+            t.valuta,
+            t.opis
+        ]);
+
+        autoTable(doc, {
+            head: [['ID', 'Kategorija', 'Datum i vreme', 'Tip', 'Iznos', 'Valuta', 'Opis']],
+            body: table,
+        });
+
+
+        const pdfUrl = doc.output('bloburl');
+        window.open(pdfUrl);
+    };
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -291,9 +325,10 @@ const Transakcija = () => {
                     {error && <p className="error">{error}</p>}
                     {loading && <p>Učitavanje...</p>}
 
-                    <PrimaryButton text={editId ? "Sačuvaj izmene" : "Kreiraj transakciju"} />
+                    <PrimaryButton text={editId ? "Sačuvaj izmene" : "Kreiraj transakciju"} />    
 
                 </form>
+                <button text="Izvezi u PDF" onClick={() => exportToPDF(transakcije)}>Izvezi u PDF</button>
             </div>
 
             {/* //LISTA KATEGORIJA - KLIKOM NA KATEGORIJU SE PRIKAZUJU TRANSAKCIJE TE KATEGORIJE */}
