@@ -256,6 +256,33 @@ select {
   padding: 1rem;
 }
 
+/* // Stilizacija forme za uređivanje profila */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #374151; /* tamno siva */
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #059669; /* zelena kad je fokusirano */
+  outline: none;
+}
+
+
 
 
 

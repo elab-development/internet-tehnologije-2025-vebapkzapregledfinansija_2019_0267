@@ -18,6 +18,42 @@ const MojProfil = () => {
     const [korisnik, setKorisnik] = React.useState(null);
 
     const [transakcije, setTransakcije] = React.useState([]);
+    const [ciljevi, setCiljevi] = React.useState([]);
+
+    const [formData, setFormData] = React.useState({
+        ime: user?.ime || "",
+        prezime: user?.prezime || "",
+        email: user?.email || "",
+        // password: "",
+        // password_confirmation: "",
+    });
+
+    const [edit, setEdit] = React.useState(false);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    }
+
+    const handleSubmit = async (e) => {
+        try {
+            setLoading(true);
+            console.log("Submitting profile update with data:", formData);
+            const res = await api.put('/profile', formData);
+            console.log("Profile update response data:", res.data);
+            setInfo("Podaci su uspešno ažurirani");
+            setKorisnik(prev => ({ ...prev, ...formData }));
+            localStorage.setItem("user", JSON.stringify({ ...user, ...formData }));
+            setEdit(false);
+        }catch (error) {
+            console.error("Greska pri azuriranju profila:", error);
+            setError("Greska pri azuriranju profila");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const fetchTransakcije = async (kategorijaId=null) => {
         try {
@@ -52,10 +88,25 @@ const MojProfil = () => {
         }
     };
 
+    const fetchCiljevi = async () => {
+        try {
+            setLoading(true);
+            const res = await api.get(`/finansijski-ciljevi/korisnik/${user.id}`);
+            console.log("Ciljevi response data:", res.data);
+            setCiljevi(res.data.data);
+        } catch (error) {
+            console.error("Greska pri ucitavanju ciljeva:", error);
+            setError("Greska pri ucitavanju ciljeva");
+        }finally {
+            setLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         fetchTransakcije();
         fetchUserInfo();
+        fetchCiljevi();
     }, []);
 
     const generatePieData = (transakcije) => {
@@ -82,36 +133,72 @@ const MojProfil = () => {
         colors: ["#059669", "#ef4444", "#3b82f6", "#f59e0b"],
     };
 
-    // Primer podataka za gauge chart (ciljevi)
-    const gaugeData = [
-        ["Label", "Value"],
-        ["Štednja", 70],
-        ["Putovanje", 40],
-        ["Investicije", 55],
-    ];
+    // Primer podataka za bar chart (ciljevi)
 
-    const gaugeOptions = {
-        width: 400,
-        height: 120,
-        redFrom: 0,
-        redTo: 30,
-        yellowFrom: 30,
-        yellowTo: 70,
-        greenFrom: 70,
-        greenTo: 100,
-        minorTicks: 5,
+    const generateCiljeviData = (ciljevi) => {
+        const data = [["Naziv cilja", "Trenutni iznos", "Ciljni iznos"]];
+        ciljevi.forEach(cilj => {
+            data.push([cilj.naziv, Number(cilj.trenutni_iznos), Number(cilj.ciljni_iznos)]);
+        });
+
+        console.log("Generated ciljevi data for chart:", data);
+
+        return data;
+    }
+
+    const ciljeviData = generateCiljeviData(ciljevi);
+
+    const ciljeviOptions = {
+        title: "Finansijski ciljevi",
+        bars: "horizontal",
+        colors: ["#059669", "#ef4444"],
+        bar: { groupWidth: "70%" },
+        chartArea: { width: "70%" },
+        isStacked: false,
     };
+
+    
 
   return (
     <div>
         <div className="hero">
             {/* Leva strana: podaci o korisniku */}
             <div className="hero-text">
-            <h1>Moj Profil</h1>
-            <p>Ime: {korisnik?.ime}</p>
-            <p>Prezime: {korisnik?.prezime}</p>
-            <p>Email: {korisnik?.email}</p>
-            <button className="btn primary">Izmeni podatke</button>
+                <h1>Moj Profil</h1>
+                {!edit ? (<div style={{marginTop: "50px"}}>
+                    <p>Ime: {korisnik?.ime}</p>
+                    <p>Prezime: {korisnik?.prezime}</p>
+                    <p>Email: {korisnik?.email}</p>
+                    <button className="btn primary" onClick={() => setEdit(true)}>
+                        Izmeni podatke
+                    </button>
+                </div>):(
+                    <div>
+                        <div className="form-group">
+                            <label>Ime:</label>
+                            <input type="text" name="ime" value={formData.ime} onChange={handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Prezime:</label>
+                            <input type="text" name="prezime" value={formData.prezime} onChange={handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Email:</label>
+                            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                        </div>
+                        {info && <p className="info">{info}</p>}
+                        {error && <p className="error">{error}</p>}
+                        {loading && <p>Učitavanje...</p>}
+                        <button className="btn primary" onClick={handleSubmit}>
+                            Sačuvaj izmene
+                        </button>
+                        <button className="btn secondary" onClick={() => setEdit(false)}>
+                            Otkaži
+                        </button>
+                    </div>
+
+                )}
+                
             </div>
 
             {/* Desna strana: SummaryCard + grafikoni */}
@@ -120,7 +207,7 @@ const MojProfil = () => {
             </div>
         </div>
         <div className="metrics-section">
-            <h2>Moje metrike</h2>
+            <h1 style={{ textAlign: "center", marginBottom: "40px" }}>Moje metrike</h1>
             <div className="metrics-grid">
                 <div className="metric-card">
                     <Chart
@@ -133,11 +220,11 @@ const MojProfil = () => {
                 </div>
                 <div className="metric-card">
                     <Chart
-                    chartType="Gauge"
-                    data={gaugeData}
-                    options={gaugeOptions}
+                    chartType="BarChart"
+                    data={ciljeviData}
+                    options={ciljeviOptions}
                     width={"100%"}
-                    height={"200px"}
+                    height={"500px"}
                     />
                 </div>
             </div>
