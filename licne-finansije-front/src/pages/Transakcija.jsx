@@ -124,7 +124,9 @@ const Transakcija = () => {
 
         console.log("Exporting to PDF, transakcije:", transakcije);
 
-        doc.text("Transakcije", 14, 20);
+        doc.setFontSize(18);
+        doc.text("Izveštaj transakcija", 14, 20);
+
         
         const table=transakcije.map(t => [
             t.idTransakcija,
@@ -139,6 +141,7 @@ const Transakcija = () => {
         autoTable(doc, {
             head: [['ID', 'Kategorija', 'Datum i vreme', 'Tip', 'Iznos', 'Valuta', 'Opis']],
             body: table,
+            startY: 30,
         });
 
 
