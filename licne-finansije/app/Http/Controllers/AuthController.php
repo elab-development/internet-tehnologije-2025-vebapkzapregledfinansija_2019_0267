@@ -38,6 +38,7 @@ class AuthController extends Controller
             'prezime' => $data['prezime'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'uloga' => 'korisnik',
         ]);
 
         // Verifikacioni mejl

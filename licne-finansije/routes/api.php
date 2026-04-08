@@ -8,7 +8,10 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\KategorijaController;
 use App\Http\Controllers\PodsetnikController;
 use App\Http\Controllers\TransakcijaController;
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminStatsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\IsAdmin;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -17,6 +20,24 @@ Route::post('password/forgot', [ForgotPasswordController::class, 'sendResetLink'
 Route::post('password/reset', [ForgotPasswordController::class, 'resetPassword']);
 
 Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+
+// Admin rute
+Route::middleware(['auth:sanctum', 'IsAdmin'])->group(function () {
+    Route::get('/stats/users', [AdminStatsController::class, 'users']);
+
+    Route::get('/admin/users', [AdminUserController::class, 'index']);
+    Route::get('/admin/users/{id}', [AdminUserController::class, 'show']);
+    Route::post('/admin/users', [AdminUserController::class, 'store']);
+    Route::put('/admin/users/{id}', [AdminUserController::class, 'update']);
+    
+    Route::patch('/admin/users/{id}/role', [AdminUserController::class, 'updateRole']);
+    
+    Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
+    Route::post('/admin/users/{id}/restore', [AdminUserController::class, 'restore']);
+    Route::delete('/admin/users/{id}/force', [AdminUserController::class, 'forceDelete']);
+
+});
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
