@@ -22,7 +22,7 @@ Route::post('password/reset', [ForgotPasswordController::class, 'resetPassword']
 Route::get('/email/verify/{id}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
 
 // Admin rute
-Route::middleware(['auth:sanctum', 'IsAdmin'])->group(function () {
+Route::middleware(['auth:sanctum', IsAdmin::class])->group(function () {
     Route::get('/stats/users', [AdminStatsController::class, 'users']);
 
     Route::get('/admin/users', [AdminUserController::class, 'index']);

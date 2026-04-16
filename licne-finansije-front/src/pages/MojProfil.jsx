@@ -169,6 +169,9 @@ const MojProfil = () => {
                     <p>Ime: {korisnik?.ime}</p>
                     <p>Prezime: {korisnik?.prezime}</p>
                     <p>Email: {korisnik?.email}</p>
+                    <p>Bodovi: {korisnik?.poeni}</p>
+                    <p>Nivo: {korisnik?.nivo}</p>
+                    <p>Uloga: {korisnik?.uloga}</p>
                     <button className="btn primary" onClick={() => setEdit(true)}>
                         Izmeni podatke
                     </button>

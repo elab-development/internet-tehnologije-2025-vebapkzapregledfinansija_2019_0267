@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Enums\Uloga;
 
 class IsAdmin
 {
@@ -16,10 +17,12 @@ class IsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         $user=$request->user();
+
+
         if(!$user){
             return response()->json(['message'=>'Niste ulogovani'],401);
         }
-        if($user->uloga!=='admin'){
+        if($user->uloga !== Uloga::ADMIN){
             return response()->json(['message'=>'Nemate pristup, niste admin'],403);
         }
         return $next($request);

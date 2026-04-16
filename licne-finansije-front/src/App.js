@@ -13,6 +13,8 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import RegistrationPage from './pages/RegistrationPage';
 import MojProfil from './pages/MojProfil';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminStats from './pages/AdminStats';
 
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
         <Route path="/kategorija" element={<Kategorija />} />
         <Route path="/transakcija" element={<Transakcija />} />
         <Route path="/moj-profil" element={<MojProfil />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-stats" element={<AdminStats />} />
       </Routes>
       <Footer></Footer>
      </BrowserRouter>

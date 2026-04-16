@@ -74,7 +74,7 @@ class AdminUserController extends Controller
         ], 201);
     }
 
-    pubblic function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $user=User::withTrashed()->findOrFail($id);
 
