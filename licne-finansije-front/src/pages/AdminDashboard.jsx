@@ -1,7 +1,9 @@
 import React from 'react'
 import api from '../api/api'
 import './Pocetna.css';
+import UsersTable from '../components/UsersTable';
 import { useState, useEffect } from 'react';
+import { set } from 'date-fns';
 
 const AdminDashboard = () => {
 
@@ -11,24 +13,51 @@ const AdminDashboard = () => {
 
     const [korisnici, setKorisnici] = useState([]);
 
-    const fetchKorisnici = async () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [selectedPage, setSelectedPage] = useState(currentPage);
+    const [search, setSearch] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [showDeleted, setShowDeleted] = useState(false);
+    const [ulogaFilter, setUlogaFilter] = useState('');
+
+
+    const fetchKorisnici = async ({page=1, search='', showDeleted=false}={}) => {
             try {
                 setLoading(true);
-                const res = await api.get('/admin/users');
+                const res = await api.get('/admin/users', 
+                    {params: {
+                        page,
+                        search,
+                        include_deleted: showDeleted,
+                        uloga: ulogaFilter,
+                    }});
                 console.log("Korisnici response data:", res.data);
-                setKorisnici(res.data.data);
+
+                const korisnici = res.data.data.map(user => ({
+                    ...user,
+                    deleted: !!user.deleted_at,
+                }));
+                
+                setKorisnici(korisnici);
+                setTotalPages(res.data.last_page);
+                setCurrentPage(res.data.current_page);
+
+
             } catch (error) {
                 console.error("Greska pri ucitavanju korisnika:", error);
                 console.error('Message:', error.response.data.message);
                 setError("Greska pri ucitavanju korisnika");
+                return {data: [], totalPages: 1, currentPage: 1};
             } finally {
                 setLoading(false);
             }
         };
 
     useEffect(() => {
-        fetchKorisnici();
-    }, []);
+        fetchKorisnici({ page: currentPage, search, showDeleted, uloga: ulogaFilter });
+    }, [currentPage, search, showDeleted, ulogaFilter]);
+
 
     const handleSoftDelete = async (userId) => {
         try {
@@ -115,46 +144,25 @@ const AdminDashboard = () => {
         {loading ? (
             <p>Ucitavanje...</p>
         ) : (
-            <table>
-                <thead>
-                    <tr> 
-                        <th>ID</th>
-                        <th>Ime</th>
-                        <th>Prezime</th>
-                        <th>Email</th>
-                        <th>Uloga</th>
-                        <th>Nivo</th>
-                        <th>Poeni</th>
-                        <th>Status</th>
-                        <th>Akcije</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {korisnici.map(korisnik => (
-                        <tr key={korisnik.id} className={korisnik.deleted_at ? 'deleted' : ''}>
-                            <td>{korisnik.id}</td>
-                            <td>{korisnik.ime}</td>
-                            <td>{korisnik.prezime}</td>
-                            <td>{korisnik.email}</td>
-                            <td>{korisnik.uloga}</td>
-                            <td>{korisnik.nivo}</td>
-                            <td>{korisnik.poeni}</td>
-                            <td>{korisnik.status}</td>
-                            <td>
-                                {!korisnik.deleted_at ? (
-                                    <>
-                                        <button onClick={() => handleSoftDelete(korisnik.id)}>Meko Obrisi</button>
-                                        <button onClick={() => handlePromote(korisnik.id)}>Promoviši</button>
-                                    </>
-                                ) : (
-                                    <button onClick={() => handleRestore(korisnik.id)}>Restauriraj</button>
-                                )}
-                                <button onClick={() => handleForceDelete(korisnik.id)}>Trajno Obriši</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <UsersTable
+                users={korisnici}
+                page={currentPage}                
+                totalPages={totalPages}
+                search={search}
+                searchInput={searchInput}
+                showDeleted={showDeleted}
+                uloga={ulogaFilter}
+                onSearchChange={setSearch}
+                onSearchInputChange={setSearchInput}
+                onShowDeletedChange={setShowDeleted}
+                onUlogaChange={setUlogaFilter}
+                onPageChange={setCurrentPage}
+                onSoftDelete={handleSoftDelete}
+                onRestore={handleRestore}
+                onPermanentDelete={handleForceDelete}
+                onPromote={handlePromote}
+                onEdit={handleUpdate}
+            />
         )}
 
     </div>
