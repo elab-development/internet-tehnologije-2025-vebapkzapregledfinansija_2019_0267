@@ -331,7 +331,9 @@ const Transakcija = () => {
                     <PrimaryButton text={editId ? "Sačuvaj izmene" : "Kreiraj transakciju"} />    
 
                 </form>
-                <button text="Izvezi u PDF" onClick={() => exportToPDF(transakcije)}>Izvezi u PDF</button>
+                {user.uloga === "korisnik" ? <p style={{ marginTop: "20px", fontStyle: "italic" }}>Napomena: Pretplatite se na premium paket da biste mogli da izvezete izveštaj u PDF.</p> 
+                : <p style={{ marginTop: "20px", fontStyle: "italic" }}>Napomena: Kao PREMIUM korisnik, možete da izvezete izveštaj u PDF.</p>}
+                <button text="Izvezi u PDF" onClick={() => exportToPDF(transakcije)} disabled={user.uloga === "korisnik"}>Izvezi u PDF</button>
             </div>
 
             {/* //LISTA KATEGORIJA - KLIKOM NA KATEGORIJU SE PRIKAZUJU TRANSAKCIJE TE KATEGORIJE */}

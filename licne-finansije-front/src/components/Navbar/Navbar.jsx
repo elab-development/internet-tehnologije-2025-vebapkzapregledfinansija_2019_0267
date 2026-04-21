@@ -9,12 +9,16 @@ const Navbar = () => {
 
   const location=useLocation();
   const [isAuth, setIsAuth] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const user= JSON.parse(localStorage.getItem("user"));
     setIsAuth(!!token);
+    setIsAdmin(user && user.uloga === "admin");
     console.log("location changed:", location.pathname);
     console.log("isAuth:", isAuth);
+    console.log("isAdmin:", isAdmin);
     console.log("token:", token);
   }, [location]);
 
@@ -78,6 +82,14 @@ const Navbar = () => {
                   onClick={() => navigate("/transakcija")}>
                     Transakcija
                   </button>
+
+                  {isAdmin && (
+                    <button 
+                    className="btn primary"
+                    onClick={() => navigate("/admin-dashboard")}>
+                      Admin dashboard
+                    </button>
+                  )}
 
                   <button 
                   className="btn secondary"

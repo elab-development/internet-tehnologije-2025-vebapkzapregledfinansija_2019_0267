@@ -92,7 +92,9 @@ useEffect(() => {
                   <>
                     <button className="btn primary small" onClick={() => onSoftDelete(u.id)}>Obriši</button>
                     <button className="btn primary small" onClick={() => onEdit(u.id)}>Izmeni</button>
-                    <button className="btn primary small" onClick={() => onPromote(u.id)}>Promoviši</button>
+                    <button className="btn primary small" onClick={() => onPromote(u.id, u.uloga)} disabled={u.uloga === "admin"}>
+                      Promoviši
+                    </button>
                   </>
                 ) : (
                   <>

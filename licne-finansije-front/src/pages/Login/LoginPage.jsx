@@ -33,7 +33,7 @@ const LoginPage = () => {
       setInfo(message || "Uspešno logovanje");
       setLoading(false);
       setTimeout(() => {
-        navigate("/budzet");
+        navigate("/moj-profil");
       }, 1000);
     } catch (err) {
       setLoading(false);

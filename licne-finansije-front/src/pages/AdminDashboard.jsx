@@ -22,7 +22,7 @@ const AdminDashboard = () => {
     const [ulogaFilter, setUlogaFilter] = useState('');
 
 
-    const fetchKorisnici = async ({page=1, search='', showDeleted=false}={}) => {
+    const fetchKorisnici = async ({page=1, search='', showDeleted=false, ulogaFilter=''}={}) => {
             try {
                 setLoading(true);
                 const res = await api.get('/admin/users', 
@@ -119,12 +119,14 @@ const AdminDashboard = () => {
         }
     };
 
-    const handlePromote= async (userId) => {
+    const handlePromote= async (userId, currentUloga) => {
         try {
             setLoading(true);
-            await api.patch(`/admin/users/${userId}/role`);
+            const newUloga= currentUloga === "korisnik" ? "premium" : "korisnik";
+            console.log(`Promovišem korisnika ${userId} sa ulogom ${currentUloga} na ${newUloga}`);
+            await api.patch(`/admin/users/${userId}/role`, { uloga: newUloga });
             setInfo("Korisnik je uspešno PROMOVISAN");
-            fetchKorisnici(); // Osvežavanje liste korisnika nakon promocije
+            fetchKorisnici({ page: currentPage, search, showDeleted, uloga: ulogaFilter });
         }
         catch (error) {
             console.error("Greska pri promociji korisnika:", error);
