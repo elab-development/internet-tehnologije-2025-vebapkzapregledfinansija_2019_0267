@@ -108,7 +108,7 @@ const AdminDashboard = () => {
             setLoading(true);
             await api.put(`/admin/users/${userId}`, updatedData);
             setInfo("Korisnik je uspešno AŽURIRAN");
-            fetchKorisnici(); // Osvežavanje liste korisnika nakon ažuriranja
+            fetchKorisnici({page : currentPage, search, showDeleted, ulogaFilter}); // Osvežavanje liste korisnika nakon ažuriranja
         }
         catch (error) {
             console.error("Greska pri ažuriranju korisnika:", error);

@@ -462,3 +462,12 @@ select {
 .pagination {
   box-shadow: 0 6px 15px rgba(0,0,0,0.05);
 }
+
+.table input,
+.table select {
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+}

@@ -85,6 +85,8 @@ class AdminUserController extends Controller
             'prezime' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|string|email|max:255|unique:users,email,'.$user->id,
             'uloga' => 'sometimes|required|in:korisnik,premium,admin',
+            'nivo' => 'sometimes|required|integer|min:0',
+            'poeni' => 'sometimes|required|integer|min:0',
         ]);
 
         if ($validator->fails()) {

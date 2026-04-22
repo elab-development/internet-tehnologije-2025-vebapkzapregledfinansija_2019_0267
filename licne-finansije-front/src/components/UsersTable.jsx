@@ -10,6 +10,8 @@ import '../pages/Pocetna.css';
 const UsersTable = ({users, page, totalPages, search, searchInput, showDeleted, uloga, onSearchChange, onSearchInputChange, onShowDeletedChange, onUlogaChange, onPageChange, onSoftDelete, onRestore, onPermanentDelete, onPromote, onEdit}) => {
 
 const [selectedPage, setSelectedPage] = useState(page);
+const [editUserId, setEditUserId] = useState(null);
+const [editFormData, setEditFormData] = useState({});
 
 useEffect(() => {
     setSelectedPage(page);
@@ -74,10 +76,30 @@ useEffect(() => {
         </thead>
         <tbody>
           {users.map((u) => (
-            <tr key={u.id}>
+            <tr key={u.id}>  
               <td>{u.id}</td>
-              <td>{u.ime}</td>
-              <td>{u.prezime}</td>
+              <td>
+                {editUserId === u.id ? (
+                  <input
+                    type="text"
+                    value={editFormData.ime}
+                    onChange={(e) => setEditFormData({ ...editFormData, ime: e.target.value })}
+                  /> ) : (
+                    u.ime
+                  )
+                }
+              </td>
+              <td>
+                {editUserId === u.id ? (
+                  <input
+                    type="text"
+                    value={editFormData.prezime}
+                    onChange={(e) => setEditFormData({ ...editFormData, prezime: e.target.value })}
+                  /> ) : (
+                    u.prezime
+                  )
+                }
+              </td>
               <td>{u.email}</td>
               <td>
                 <span className={`status ${u.deleted ? "deleted" : "active"}`}>
@@ -85,23 +107,72 @@ useEffect(() => {
                 </span>
               </td>
               <td>{u.uloga}</td>
-              <td>{u.nivo}</td>
-              <td>{u.poeni}</td>
+              <td>
+                {editUserId === u.id ? (
+                  <input
+                    type="number"
+                    value={editFormData.nivo}
+                    onChange={(e) => setEditFormData({ ...editFormData, nivo: e.target.value })}
+                  /> ) : (
+                    u.nivo
+                  )
+                }
+              </td>
+              <td>
+                {editUserId === u.id ? (
+                  <input
+                    type="number"
+                    value={editFormData.poeni}
+                    onChange={(e) => setEditFormData({ ...editFormData, poeni: e.target.value })}
+                  /> ) : (
+                    u.poeni
+                  )
+                }
+              </td>
               <td className="actions">
-                {!u.deleted ? (
+                {editUserId === u.id ? (
                   <>
-                    <button className="btn primary small" onClick={() => onSoftDelete(u.id)}>Obriši</button>
-                    <button className="btn primary small" onClick={() => onEdit(u.id)}>Izmeni</button>
-                    <button className="btn primary small" onClick={() => onPromote(u.id, u.uloga)} disabled={u.uloga === "admin"}>
-                      Promoviši
-                    </button>
+                    <button className="btn small primary" onClick={async () => {await onEdit(u.id, editFormData); setEditUserId(null);}}>Sačuvaj</button>
+                    <button className="btn small" onClick={() => setEditUserId(null)}>Otkaži</button>
                   </>
-                ) : (
-                  <>
-                    <button className="btn primary small" onClick={() => onRestore(u.id)}>Vrati</button>
-                    <button className="btn primary small" onClick={() => onEdit(u.id)}>Izmeni</button>
-                    <button className="btn small" style={{ backgroundColor: "#dc2626", color: "white" }} onClick={() => onPermanentDelete(u.id)}>Trajno</button>
-                  </>
+                ) : ( 
+                  !u.deleted ? (
+                    <>
+                      <button className="btn primary small" onClick={() => onSoftDelete(u.id)}>Obriši</button>
+                      <button className="btn primary small" onClick={() => {
+                          setEditUserId(u.id);
+                          setEditFormData({
+                            ime: u.ime,
+                            prezime: u.prezime,
+                            email: u.email,
+                            uloga: u.uloga,
+                            nivo: u.nivo,
+                            poeni: u.poeni
+                          });
+                        }}>
+                          Izmeni
+                      </button>
+                      <button className="btn primary small" onClick={() => onPromote(u.id, u.uloga)} disabled={u.uloga === "admin"}>
+                        Promoviši
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn primary small" onClick={() => onRestore(u.id)}>Vrati</button>
+                      <button className="btn primary small" onClick={() => {
+                          setEditUserId(u.id);
+                          setEditFormData({
+                            ime: u.ime,
+                            prezime: u.prezime,
+                            email: u.email,
+                            uloga: u.uloga,
+                            nivo: u.nivo,
+                            poeni: u.poeni
+                          });
+                        }}>Izmeni</button>
+                      <button className="btn small" style={{ backgroundColor: "#dc2626", color: "white" }} onClick={() => onPermanentDelete(u.id)}>Trajno</button>
+                    </>
+                  )
                 )}
               </td>
             </tr>
