@@ -1,5 +1,6 @@
 import React from 'react'
 import SummaryCard from './SummaryCard';
+import Converter from './Converter';
 import '../pages/Pocetna.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,7 +22,7 @@ const HeroSection = () => {
         </div>
 
 
-        <SummaryCard />
+        <Converter />
     </section>
   )
 }
