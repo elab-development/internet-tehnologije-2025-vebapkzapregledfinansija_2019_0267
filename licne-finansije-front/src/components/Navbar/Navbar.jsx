@@ -90,6 +90,13 @@ const Navbar = () => {
                       Admin dashboard
                     </button>
                   )}
+                  {isAdmin && (
+                    <button 
+                    className="btn primary"
+                    onClick={() => navigate("/admin-stats")}>
+                      Statistika
+                    </button>
+                  )}
 
                   <button 
                   className="btn secondary"
