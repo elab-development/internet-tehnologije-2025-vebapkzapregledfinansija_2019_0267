@@ -107,23 +107,14 @@ useEffect(() => {
                 </span>
               </td>
               <td>{u.uloga}</td>
-              <td>
-                {editUserId === u.id ? (
-                  <input
-                    type="number"
-                    value={editFormData.nivo}
-                    onChange={(e) => setEditFormData({ ...editFormData, nivo: e.target.value })}
-                  /> ) : (
-                    u.nivo
-                  )
-                }
-              </td>
+              <td>{u.nivo}</td>
               <td>
                 {editUserId === u.id ? (
                   <input
                     type="number"
                     value={editFormData.poeni}
                     onChange={(e) => setEditFormData({ ...editFormData, poeni: e.target.value })}
+                    disabled={u.uloga === 'admin'}
                   /> ) : (
                     u.poeni
                   )
@@ -153,7 +144,7 @@ useEffect(() => {
                           Izmeni
                       </button>
                       <button className="btn primary small" onClick={() => onPromote(u.id, u.uloga)} disabled={u.uloga === "admin"}>
-                        Promoviši
+                        {u.uloga === "korisnik" ? "Promoviši" : "Degradiraj"}
                       </button>
                     </>
                   ) : (
