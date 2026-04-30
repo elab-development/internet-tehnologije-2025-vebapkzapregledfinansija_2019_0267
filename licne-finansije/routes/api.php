@@ -108,3 +108,4 @@ Route::get('/podsetnici/korisnik/{id}', [PodsetnikController::class, 'userRemind
 Route::post('/podsetnici', [PodsetnikController::class, 'store']);
 Route::delete('/podsetnici/{id}', [PodsetnikController::class, 'destroy']);
 Route::put('/podsetnici/{id}', [PodsetnikController::class, 'update']);
+

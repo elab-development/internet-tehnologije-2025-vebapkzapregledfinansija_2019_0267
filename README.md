@@ -61,6 +61,14 @@ Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put k
     ```js
     baseURL: 'http://localhost/api'
 
+- Proveri bazu podataka kroz DatabaseClient ekstenziju na Visual Studio Code koristeći:
+    - Host: localhost
+    - Port: 3306
+    - Database: finansije
+    - User: laravel
+    - Password: laravel
+
+
 ## 📋 Funkcionalnosti
 - Registracija i prijava korisnika (JWT tokeni)
 - Pregled kategorija prihoda i rashoda
@@ -70,11 +78,9 @@ Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put k
 
 ## 🧪 Testiranje
 
-- Proveri bazu podataka kroz DatabaseClient ekstenziju na Visual Studio Code koristeći:
-- Host: localhost
-- Port: 3306
-- Database: finansije
-- User: laravel
-- Password: laravel
+- Za pokretanje automatizovanih testova pokrenuti naredbu u terminalu:
+    ```bash
+    docker compose exec laravel php artisan test
+
 
 📖 Ovaj README služi kao vodič za instalaciju i pokretanje projekta, kao i pregled osnovnih funkcionalnosti aplikacije.
