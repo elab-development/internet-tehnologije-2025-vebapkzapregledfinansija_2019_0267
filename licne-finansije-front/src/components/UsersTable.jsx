@@ -129,7 +129,7 @@ useEffect(() => {
                 ) : ( 
                   !u.deleted ? (
                     <>
-                      <button className="btn primary small" onClick={() => onSoftDelete(u.id)}>Obriši</button>
+                      <button className="btn primary small" onClick={() => onSoftDelete(u.id)}  disabled={u.uloga === "admin"}>Obriši</button>
                       <button className="btn primary small" onClick={() => {
                           setEditUserId(u.id);
                           setEditFormData({
