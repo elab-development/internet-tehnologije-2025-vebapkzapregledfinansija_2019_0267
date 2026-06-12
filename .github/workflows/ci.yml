@@ -1,0 +1,71 @@
+name: Laravel Tests
+
+on: 
+  push:
+   branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest #na kojoj masini se izvrsavaju
+    
+    services: 
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: finansije
+          MYSQL_USER: laravel
+          MYSQL_PASSWORD: laravel
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" 
+                --health-interval=10s
+                --health-timeout=5s 
+                --health-retries=3 
+      #ovo znaci da cekamo da mysql servis da bude spreman pre nego sto pokrenemo testove, i to radimo pomocu healthcheck-a 
+      #koji proverava da li je mysql admin ping uspeo
+
+    defaults:
+      run:
+        working-directory: licne-finansije #u kom folderu se nalazimo kada pokrenemo testove
+
+    steps:
+      name: Checkout code #preuzimanje koda sa github repozitorijuma
+      uses: actions/checkout@v4
+
+      name: Set up PHP #postavljanje php okruzenja
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'
+        extensions: mbstring, pdo_mysql, zip
+        coverage: none
+
+      name: Copy .env file #kopiranje .env fajla koji je potreban za pokretanje testova, i u njemu su podeseni parametri za konekciju sa bazom
+      run: cp .env.example .env 
+
+      name: Install dependencies #instaliranje laravel dependencija pomocu composer-a
+      run: composer install --no-interaction --prefer-dist --no-progress
+      
+      name: Generate application key #generisanje aplikacionog kljuca koji je potreban za rad laravel aplikacije
+      run: php artisan key:generate
+      
+      name: Run migrations #pokretanje migracija koje ce kreirati tabele u bazi, i popuniti ih test podacima
+      env:
+        DB_HOST: mysql
+        DB_PORT: 3306
+        DB_DATABASE: finansije
+        DB_USERNAME: laravel
+        DB_PASSWORD: laravel
+      run: php artisan migrate --force
+
+      name: Run tests #pokretanje testova pomocu phpunit-a
+      env:
+        DB_HOST: mysql
+        DB_PORT: 3306
+        DB_DATABASE: finansije
+        DB_USERNAME: laravel
+        DB_PASSWORD: laravel
+      run: php artisan test 
+      
