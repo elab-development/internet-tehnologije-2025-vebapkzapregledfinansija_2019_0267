@@ -67,5 +67,5 @@ jobs:
         DB_DATABASE: finansije
         DB_USERNAME: laravel
         DB_PASSWORD: laravel
-      run: php artisan test 
+      run: php artisan test   
       
