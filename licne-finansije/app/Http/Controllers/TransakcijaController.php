@@ -6,18 +6,45 @@ use App\Http\Resources\TransakcijaResource;
 use App\Models\Transakcija;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
 class TransakcijaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    
+    #[OA\Get(
+    path: "/api/transakcije",
+    summary: "Pregled svih transakcija",
+    tags: ["Transakcije"],
+    responses: [
+        new OA\Response(response: 200, description: "Lista svih transakcija")
+    ]
+)]
     public function index()
     {
         return TransakcijaResource::collection(Transakcija::all());
     }
 
     //GET/transakcije/korisnik/{id}
+    #[OA\Get(
+    path: "/api/transakcije/korisnik/{id}",
+    summary: "Pregled transakcija određenog korisnika",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID korisnika",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Lista transakcija korisnika")
+    ]
+)]
     public function userTransactions($idKorisnik)
     {
         $transakcije = Transakcija::where('idKorisnik', $idKorisnik)->get();
@@ -25,6 +52,30 @@ class TransakcijaController extends Controller
     }
 
     //GET/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}
+    #[OA\Get(
+    path: "/api/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}",
+    summary: "Pregled transakcija korisnika za određenu kategoriju",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "idKorisnik",
+            in: "path",
+            required: true,
+            description: "ID korisnika",
+            schema: new OA\Schema(type: "integer")
+        ),
+        new OA\Parameter(
+            name: "idKategorija",
+            in: "path",
+            required: true,
+            description: "ID kategorije",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Lista transakcija za zadatu kategoriju")
+    ]
+)]
     public function userCategoryTransactions($idKorisnik, $idKategorija)
     {
         $transakcije = Transakcija::where('idKorisnik', $idKorisnik)
@@ -45,6 +96,30 @@ class TransakcijaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[OA\Post(
+    path: "/api/transakcije",
+    summary: "Kreiranje nove transakcije",
+    tags: ["Transakcije"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["idKorisnik", "idKategorija", "iznos", "datum_vreme", "tipTransakcije", "valuta"],
+            properties: [
+                new OA\Property(property: "idKorisnik", type: "integer", example: 1),
+                new OA\Property(property: "idKategorija", type: "integer", example: 1),
+                new OA\Property(property: "iznos", type: "number", format: "float", example: 1500.50),
+                new OA\Property(property: "datum_vreme", type: "string", format: "date-time", example: "2026-06-18 20:00:00"),
+                new OA\Property(property: "tipTransakcije", type: "string", enum: ["PRIHOD", "RASHOD"], example: "RASHOD"),
+                new OA\Property(property: "valuta", type: "string", example: "RSD"),
+                new OA\Property(property: "opis", type: "string", example: "Kupovina namirnica")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Transakcija uspešno kreirana"),
+        new OA\Response(response: 422, description: "Validacija nije prošla")
+    ]
+)]
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -70,6 +145,24 @@ class TransakcijaController extends Controller
     /**
      * Display the specified resource.
      */
+    #[OA\Get(
+    path: "/api/transakcije/{id}",
+    summary: "Prikaz detalja određene transakcije",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID transakcije",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Detalji transakcije"),
+        new OA\Response(response: 404, description: "Transakcija nije pronađena")
+    ]
+)]
     public function show($id)
     {
         return new TransakcijaResource(Transakcija::findOrFail($id));
@@ -86,6 +179,38 @@ class TransakcijaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[OA\Put(
+    path: "/api/transakcije/{id}",
+    summary: "Ažuriranje postojeće transakcije",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID transakcije",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: "idKorisnik", type: "integer", example: 1),
+                new OA\Property(property: "idKategorija", type: "integer", example: 1),
+                new OA\Property(property: "iznos", type: "number", format: "float", example: 2000.00),
+                new OA\Property(property: "datum_vreme", type: "string", format: "date-time", example: "2026-06-18 20:30:00"),
+                new OA\Property(property: "tipTransakcije", type: "string", enum: ["PRIHOD", "RASHOD"], example: "RASHOD"),
+                new OA\Property(property: "valuta", type: "string", example: "RSD"),
+                new OA\Property(property: "opis", type: "string", example: "Izmenjen opis")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Transakcija uspešno ažurirana"),
+        new OA\Response(response: 422, description: "Validacija nije prošla")
+    ]
+)]
     public function update(Request $request, $id)
     {
         $transakcija = Transakcija::find($id);
@@ -109,6 +234,33 @@ class TransakcijaController extends Controller
         return response()->json(new TransakcijaResource($transakcija), 200);
     }
 
+    #[OA\Patch(
+    path: "/api/transakcije/{id}/valuta",
+    summary: "Ažuriranje valute i iznosa transakcije",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID transakcije",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["valuta", "iznos"],
+            properties: [
+                new OA\Property(property: "valuta", type: "string", example: "EUR"),
+                new OA\Property(property: "iznos", type: "number", format: "float", example: 12.50)
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Valuta i iznos uspešno ažurirani")
+    ]
+)]
     public function updateValuta(Request $request, $id)
     {
         $transakcija= Transakcija::findOrFail($id);
@@ -121,6 +273,24 @@ class TransakcijaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[OA\Delete(
+    path: "/api/transakcije/{id}",
+    summary: "Brisanje transakcije",
+    tags: ["Transakcije"],
+    parameters: [
+        new OA\Parameter(
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID transakcije",
+            schema: new OA\Schema(type: "integer")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Transakcija je obrisana"),
+        new OA\Response(response: 404, description: "Transakcija nije pronađena")
+    ]
+)]
     public function destroy($id)  
     {
         $transakcija = Transakcija::find($id);
@@ -134,6 +304,15 @@ class TransakcijaController extends Controller
 
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/pregled",
+    summary: "Pregled svih transakcija ulogovanog korisnika",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    responses: [
+        new OA\Response(response: 200, description: "Lista transakcija ulogovanog korisnika")
+    ]
+)]
     public function pregledTransakcija(Request $request)
     {
         $userId = $request->user()->id;
@@ -143,6 +322,15 @@ class TransakcijaController extends Controller
         return response()->json(TransakcijaResource::collection($transakcije));
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/prihodi",
+    summary: "Pregled svih prihoda ulogovanog korisnika",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    responses: [
+        new OA\Response(response: 200, description: "Lista prihoda ulogovanog korisnika")
+    ]
+)]
     public function mojiPrihodi(Request $request)
     {
         $userId = $request->user()->id;
@@ -156,6 +344,15 @@ class TransakcijaController extends Controller
 
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/rashodi",
+    summary: "Pregled svih rashoda ulogovanog korisnika",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    responses: [
+        new OA\Response(response: 200, description: "Lista rashoda ulogovanog korisnika")
+    ]
+)]
     public function mojiRashodi(Request $request)
     {
         $userId = $request->user()->id;
@@ -169,6 +366,24 @@ class TransakcijaController extends Controller
 
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/prihodi-paginacija",
+    summary: "Pregled prihoda ulogovanog korisnika sa paginacijom",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    parameters: [
+        new OA\Parameter(
+            name: "per_page",
+            in: "query",
+            required: false,
+            description: "Broj stavki po stranici",
+            schema: new OA\Schema(type: "integer", default: 10)
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Paginisana lista prihoda")
+    ]
+)]
     public function mojiPrihodiPaginacija(Request $request)
     {
         $userId = $request->user()->id;
@@ -184,6 +399,24 @@ class TransakcijaController extends Controller
 
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/rashodi-paginacija",
+    summary: "Pregled rashoda ulogovanog korisnika sa paginacijom",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    parameters: [
+        new OA\Parameter(
+            name: "per_page",
+            in: "query",
+            required: false,
+            description: "Broj stavki po stranici",
+            schema: new OA\Schema(type: "integer", default: 10)
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Paginisana lista rashoda")
+    ]
+)]
     public function mojiRashodiPaginacija(Request $request)
     {
         $userId = $request->user()->id;
@@ -198,6 +431,44 @@ class TransakcijaController extends Controller
         return TransakcijaResource::collection($paginator);
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/prihodi-paginacija-filter",
+    summary: "Pregled prihoda ulogovanog korisnika sa filterima i paginacijom",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    parameters: [
+        new OA\Parameter(
+            name: "per_page",
+            in: "query",
+            description: "Broj stavki po stranici",
+            schema: new OA\Schema(type: "integer", default: 10)
+        ),
+        new OA\Parameter(
+            name: "idKategorija",
+            in: "query",
+            description: "Filtriranje po ID-u kategorije",
+            required: false,
+            schema: new OA\Schema(type: "integer")
+        ),
+        new OA\Parameter(
+            name: "datumOd",
+            in: "query",
+            description: "Datum početka pretrage (YYYY-MM-DD)",
+            required: false,
+            schema: new OA\Schema(type: "string", format: "date")
+        ),
+        new OA\Parameter(
+            name: "datumDo",
+            in: "query",
+            description: "Datum završetka pretrage (YYYY-MM-DD)",
+            required: false,
+            schema: new OA\Schema(type: "string", format: "date")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Filtrirana lista prihoda")
+    ]
+)]
     public function mojiPrihodiPaginacijaFilter(Request $request)
     {
         $userId = $request->user()->id;
@@ -225,6 +496,44 @@ class TransakcijaController extends Controller
         return TransakcijaResource::collection($paginator);
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/rashodi-paginacija-filter",
+    summary: "Pregled rashoda ulogovanog korisnika sa filterima i paginacijom",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    parameters: [
+        new OA\Parameter(
+            name: "per_page",
+            in: "query",
+            description: "Broj stavki po stranici",
+            schema: new OA\Schema(type: "integer", default: 10)
+        ),
+        new OA\Parameter(
+            name: "idKategorija",
+            in: "query",
+            description: "Filtriranje po ID-u kategorije",
+            required: false,
+            schema: new OA\Schema(type: "integer")
+        ),
+        new OA\Parameter(
+            name: "datumOd",
+            in: "query",
+            description: "Datum početka pretrage (YYYY-MM-DD)",
+            required: false,
+            schema: new OA\Schema(type: "string", format: "date")
+        ),
+        new OA\Parameter(
+            name: "datumDo",
+            in: "query",
+            description: "Datum završetka pretrage (YYYY-MM-DD)",
+            required: false,
+            schema: new OA\Schema(type: "string", format: "date")
+        )
+    ],
+    responses: [
+        new OA\Response(response: 200, description: "Filtrirana lista rashoda")
+    ]
+)]
     public function mojiRashodiPaginacijaFilter(Request $request)
     {
         $userId = $request->user()->id;
@@ -252,6 +561,21 @@ class TransakcijaController extends Controller
         return TransakcijaResource::collection($paginator);
     }
 
+    #[OA\Get(
+    path: "/api/transakcije/export",
+    summary: "Export transakcija u CSV formatu",
+    tags: ["Transakcije"],
+    security: [["sanctum" => []]],
+    responses: [
+        new OA\Response(
+            response: 200, 
+            description: "CSV fajl sa listom transakcija",
+            content: new OA\MediaType(
+                mediaType: "text/csv"
+            )
+        )
+    ]
+)]
     public function exportCsv (Request $request) {
         $userId = $request->user()->id;
 

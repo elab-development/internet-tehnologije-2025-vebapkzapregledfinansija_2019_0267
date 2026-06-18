@@ -11,9 +11,65 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use OpenApi\Attributes as OA;
+
 
 class ForgotPasswordController extends Controller
 {
+    #[OA\Post(
+        path: "/api/password/forgot",
+        summary: "Slanje linka za resetovanje lozinke",
+        description: "Prima email adresu korisnika, generiše privremeni token za resetovanje i šalje e-mail sa jedinstvenim linkom (npr. preko Mailtrap-a).",
+        operationId: "authSendResetLink",
+        tags: ["Autentifikacija"]
+    )]
+    #[OA\RequestBody(
+        required: true,
+        description: "Email adresa korisnika koji je zaboravio lozinku",
+        content: new OA\JsonContent(
+            required: ["email"],
+            properties: [
+                new OA\Property(property: "email", type: "string", format: "email", example: "korisnik@example.com")
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: "Zahtev je uspešno obrađen i e-mail je poslat",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Poslat link za resetovanje lozinke na email adresu ako postoji u sistemu")
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 422,
+        description: "Validacija nije prošla (loš format email adrese)",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Neuspesna validacija email adrese"),
+                new OA\Property(
+                    property: "errors",
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "email", type: "array", items: new OA\Items(type: "string", example: "The email field must be a valid email address."))
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: "Korisnik sa tim email-om ne postoji u bazi podataka",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Korisnik sa datom email adresom ne postoji")
+            ]
+        )
+    )]
     public function sendResetLink(Request $request)
     {
         // Logika za slanje linka za resetovanje lozinke
@@ -64,6 +120,73 @@ class ForgotPasswordController extends Controller
 
     }
 
+    #[OA\Post(
+        path: "/api/password/reset",
+        summary: "Resetovanje lozinke pomoću tokena",
+        description: "Prima email, token koji je poslat na mejl, kao i novu lozinku (uz potvrdu lozinke). Proverava validnost i istek tokena (60 minuta), pa ažurira lozinku u bazi podataka.",
+        operationId: "authResetPassword",
+        tags: ["Autentifikacija"]
+    )]
+    #[OA\RequestBody(
+        required: true,
+        description: "Podaci za resetovanje lozinke",
+        content: new OA\JsonContent(
+            required: ["email", "token", "password", "password_confirmation"],
+            properties: [
+                new OA\Property(property: "email", type: "string", format: "email", example: "korisnik@example.com"),
+                new OA\Property(property: "token", type: "string", example: "a1b2c3d4e5f6..."),
+                new OA\Property(property: "password", type: "string", format: "password", minLength: 8, example: "NovaLozinka123"),
+                new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "NovaLozinka123")
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: "Lozinka je uspešno promenjena",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Lozinka uspesno resetovana")
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 400,
+        description: "Token nije validan ili je istekao",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Token za resetovanje lozinke je istekao. Posaljite novi zahtev za resetovanje lozinke.")
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 422,
+        description: "Validacija nije prošla (npr. lozinke se ne poklapaju ili su prekratke)",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Neuspesna validacija"),
+                new OA\Property(
+                    property: "errors",
+                    type: "object",
+                    properties: [
+                        new OA\Property(property: "password", type: "array", items: new OA\Items(type: "string", example: "The password confirmation does not match."))
+                    ]
+                )
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 404,
+        description: "Kombinacija email-a i tokena nije pronađena u evidenciji",
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(property: "message", type: "string", example: "Neispravan token ili email")
+            ]
+        )
+    )]
     public function resetPassword(Request $request)
     {
         // Logika za resetovanje lozinke

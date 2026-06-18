@@ -1,0 +1,4041 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Veb aplikacija za pregled licnih finansija",
+        "description": "API za upravljanje ličnim finansijama (autentifikacija, transakcije, kategorije, budžeti, finansijski ciljevi, podsetnici, dokumenta i admin statistike)",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost"
+        }
+    ],
+    "paths": {
+        "/api/stats/users": {
+            "get": {
+                "tags": [
+                    "Admin Statistika"
+                ],
+                "summary": "Dobijanje statistike o korisnicima",
+                "description": "Vraća detaljne statističke podatke o registrovanim, aktivnim i obrisanim korisnicima.",
+                "operationId": "getAdminUserStats",
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitana statistika",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "total_users": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "total_users_with_deleted": {
+                                            "type": "integer",
+                                            "example": 165
+                                        },
+                                        "deleted_users": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "users_last_7_days": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "users_last_30_days": {
+                                            "type": "integer",
+                                            "example": 45
+                                        },
+                                        "users_last_365_days": {
+                                            "type": "integer",
+                                            "example": 150
+                                        },
+                                        "daily_users": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2026-06-18"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "by_role": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "uloga": {
+                                                        "type": "string",
+                                                        "example": "user"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 145
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "get": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Pregled i pretraga svih korisnika",
+                "description": "Vraća paginisanu listu korisnika uz mogućnost pretrage po imenu/mejlu, filtriranja po ulozi i uključivanja obrisanih korisnika.",
+                "operationId": "getAdminUsersIndex",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Pretraga korisnika po imenu, prezimenu ili email adresi",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Marko"
+                        }
+                    },
+                    {
+                        "name": "uloga",
+                        "in": "query",
+                        "description": "Filtriranje korisnika prema ulozi (npr. user, admin)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "user"
+                        }
+                    },
+                    {
+                        "name": "include_deleted",
+                        "in": "query",
+                        "description": "Uključivanje i meko obrisanih (soft-deleted) korisnika u rezultat (1 za da, 0 za ne)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1,
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Broj stranice za paginaciju",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitana lista korisnika sa paginacijom",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "ime": {
+                                                        "type": "string",
+                                                        "example": "Marko"
+                                                    },
+                                                    "prezime": {
+                                                        "type": "string",
+                                                        "example": "Marković"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "marko@example.com"
+                                                    },
+                                                    "uloga": {
+                                                        "type": "string",
+                                                        "example": "user"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2026-06-18T15:30:00.000000Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "first_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost/api/admin/users?page=1"
+                                        },
+                                        "from": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "last_page": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "last_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost/api/admin/users?page=3"
+                                        },
+                                        "next_page_url": {
+                                            "type": "string",
+                                            "example": "http://localhost/api/admin/users?page=2"
+                                        },
+                                        "path": {
+                                            "type": "string",
+                                            "example": "http://localhost/api/admin/users"
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "prev_page_url": {
+                                            "type": "string",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "to": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 25
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Kreiranje novog korisnika",
+                "description": "Omogućava administratoru da ručno kreira novog korisnika sa definisanom ulogom.",
+                "operationId": "adminCreateUser",
+                "requestBody": {
+                    "description": "Podaci za kreiranje novog korisnika",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "ime",
+                                    "prezime",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "ime": {
+                                        "type": "string",
+                                        "example": "Petar"
+                                    },
+                                    "prezime": {
+                                        "type": "string",
+                                        "example": "Petrović"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "petar@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Sifra123!",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "Sifra123!",
+                                        "minLength": 8
+                                    },
+                                    "uloga": {
+                                        "type": "string",
+                                        "example": "korisnik",
+                                        "default": "korisnik",
+                                        "enum": [
+                                            "korisnik",
+                                            "premium",
+                                            "admin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Korisnik uspešno kreiran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik uspešno kreiran"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 6
+                                                },
+                                                "ime": {
+                                                    "type": "string",
+                                                    "example": "Petar"
+                                                },
+                                                "prezime": {
+                                                    "type": "string",
+                                                    "example": "Petrović"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "petar@example.com"
+                                                },
+                                                "uloga": {
+                                                    "type": "string",
+                                                    "example": "korisnik"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-18T16:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije uspela (npr. loša šifra ili email već postoji)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije uspela"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}": {
+            "get": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Prikaz detalja pojedinačnog korisnika",
+                "description": "Vraća sve podatke o korisniku na osnovu njegovog ID-ja, uključujući i meko obrisane korisnike.",
+                "operationId": "getAdminUserById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno pronađen korisnik",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "ime": {
+                                            "type": "string",
+                                            "example": "Marko"
+                                        },
+                                        "prezime": {
+                                            "type": "string",
+                                            "example": "Marković"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "marko@example.com"
+                                        },
+                                        "uloga": {
+                                            "type": "string",
+                                            "example": "user"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T15:30:00.000000Z"
+                                        },
+                                        "deleted_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Ažuriranje podataka o korisniku",
+                "description": "Omogućava izmenu osnovnih podataka, uloge, nivoa i poena korisnika na osnovu njegovog ID-ja.",
+                "operationId": "adminUpdateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID korisnika koji se ažurira",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za ažuriranje korisnika (šalju se samo polja koja se menjaju)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ime": {
+                                        "type": "string",
+                                        "example": "Marko"
+                                    },
+                                    "prezime": {
+                                        "type": "string",
+                                        "example": "Novi Marković"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "markonovimail@example.com"
+                                    },
+                                    "uloga": {
+                                        "type": "string",
+                                        "example": "premium",
+                                        "enum": [
+                                            "korisnik",
+                                            "premium",
+                                            "admin"
+                                        ]
+                                    },
+                                    "nivo": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "minimum": 0
+                                    },
+                                    "poeni": {
+                                        "type": "integer",
+                                        "example": 350,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Korisnik uspešno ažuriran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik uspešno ažuriran"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "ime": {
+                                                    "type": "string",
+                                                    "example": "Marko"
+                                                },
+                                                "prezime": {
+                                                    "type": "string",
+                                                    "example": "Novi Marković"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "markonovimail@example.com"
+                                                },
+                                                "uloga": {
+                                                    "type": "string",
+                                                    "example": "premium"
+                                                },
+                                                "nivo": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "poeni": {
+                                                    "type": "integer",
+                                                    "example": 350
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2026-06-18T16:15:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije uspela",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije uspela"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email has already been taken."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Privremeno brisanje korisnika (Soft delete)",
+                "description": "Postavlja deleted_at polje i privremeno skriva korisnika iz sistema bez potpunog brisanja iz baze.",
+                "operationId": "adminDeleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika kojeg brišemo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Korisnik uspešno meko obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik soft-deleteovan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}/role": {
+            "patch": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Promena uloge korisnika",
+                "description": "Ekspresno ažuriranje samo uloge određenog korisnika (korisnik, premium ili admin).",
+                "operationId": "adminUpdateUserRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID korisnika kome se menja uloga",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Nova uloga koja se dodeljuje korisniku",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "uloga"
+                                ],
+                                "properties": {
+                                    "uloga": {
+                                        "type": "string",
+                                        "example": "admin",
+                                        "enum": [
+                                            "korisnik",
+                                            "premium",
+                                            "admin"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Uloga uspešno promenjena",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Uloga korisnika uspešno ažurirana"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "ime": {
+                                                    "type": "string",
+                                                    "example": "Marko"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "marko@example.com"
+                                                },
+                                                "uloga": {
+                                                    "type": "string",
+                                                    "example": "admin"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije uspela (poslata uloga koja ne postoji na listi)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije uspela"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "uloga": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected uloga is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}/restore": {
+            "post": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Vraćanje meko obrisanog korisnika",
+                "description": "Poništava soft delete i ponovo aktivira korisnički nalog u sistemu.",
+                "operationId": "adminRestoreUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika kojeg vraćamo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Korisnik uspešno vraćen u funkciju",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik vraćen"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Korisnik već aktivan (nije ni bio obrisan)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik nije obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}/force": {
+            "delete": {
+                "tags": [
+                    "Admin Korisnici"
+                ],
+                "summary": "Trajno brisanje korisnika iz baze (Force delete)",
+                "description": "Potpuno i nepovratno briše korisnika iz baze podataka. Uslov je da korisnik prethodno bude privremeno obrisan (soft-deleteovan).",
+                "operationId": "adminForceDeleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika kojeg trajno brišemo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Korisnik uspešno trajno obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik trajno obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Loš zahtev (Korisnik mora prvo proći kroz soft-delete)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik nije obrisan, prvo soft-delete"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "403": {
+                        "description": "Zabranjen pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registracija korisnika (uz opcioni upload profilne slike) + slanje linka za verifikaciju email-a",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "ime",
+                                    "prezime",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "ime": {
+                                        "type": "string",
+                                        "example": "Marko"
+                                    },
+                                    "prezime": {
+                                        "type": "string",
+                                        "example": "Marković"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "marko@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    },
+                                    "profilnaSlika": {
+                                        "description": "Profilna slika (jpg/jpeg/png, max 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registracija uspesna"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Prijava korisnika (Sanctum token). Ako email nije verifikovan vraca poruku.",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "marko@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Uspesno prijavljivanje"
+                    },
+                    "400": {
+                        "description": "Email adresa nije verifikovana."
+                    },
+                    "401": {
+                        "description": "Pogresan email ili lozinka"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Odjava korisnika (briše trenutni token)",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Uspesna odjava"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Podaci o trenutno ulogovanom korisniku",
+                "operationId": "9d9bc556f927575aa492a88c28fe5908",
+                "responses": {
+                    "200": {
+                        "description": "Podaci o korisniku"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/email/verify/{id}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verifikacija email-a preko potpisanog linka (temporary signed route)",
+                "operationId": "23a3f61982dab0cfcd39bf2e009ced8a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "expires",
+                        "in": "query",
+                        "description": "Timestamp isteka linka (automatski u signed URL-u)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "signature",
+                        "in": "query",
+                        "description": "Potpis linka (automatski u signed URL-u)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email verifikovan (ili vec verifikovan)"
+                    },
+                    "401": {
+                        "description": "Link nevazeći ili je istekao"
+                    }
+                }
+            }
+        },
+        "/api/update-profile": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Azuriranje profila korisnika (ime, prezime, email, password, profilna slika)",
+                "operationId": "630da0bb83fd6b02c963532ebc1fbc19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "ime": {
+                                        "type": "string",
+                                        "example": "Marko"
+                                    },
+                                    "prezime": {
+                                        "type": "string",
+                                        "example": "Marković"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "marko_novo@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "novasifra123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "novasifra123"
+                                    },
+                                    "profilnaSlika": {
+                                        "description": "Nova profilna slika (jpg/jpeg/png, max 2MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profil uspesno azuriran"
+                    },
+                    "422": {
+                        "description": "Validation errors"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/budzeti": {
+            "get": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Pregled svih budžeta",
+                "description": "Vraća listu svih kreiranih budžeta u sistemu.",
+                "operationId": "getBudzetiIndex",
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitana lista budžeta",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "naziv": {
+                                                "type": "string",
+                                                "example": "Budžet za hranu"
+                                            },
+                                            "iznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 500
+                                            },
+                                            "potroseno": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 120.5
+                                            },
+                                            "user_id": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "kategorija_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2026-06-18T12:00:00.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Kreiranje novog budžeta",
+                "description": "Omogućava kreiranje novog budžeta za određenog korisnika, mesec i godinu sa definisanim limitom.",
+                "operationId": "createBudzet",
+                "requestBody": {
+                    "description": "Podaci za kreiranje novog budžeta",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idKorisnik",
+                                    "mesec",
+                                    "godina",
+                                    "limit",
+                                    "potroseno"
+                                ],
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "mesec": {
+                                        "type": "integer",
+                                        "example": 6,
+                                        "maximum": 12,
+                                        "minimum": 1
+                                    },
+                                    "godina": {
+                                        "type": "integer",
+                                        "example": 2026
+                                    },
+                                    "limit": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 60000,
+                                        "minimum": 0
+                                    },
+                                    "potroseno": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 0,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Budžet uspešno kreiran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "mesec": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "godina": {
+                                            "type": "integer",
+                                            "example": 2026
+                                        },
+                                        "limit": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 60000
+                                        },
+                                        "potroseno": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 0
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T18:45:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "idKorisnik": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected id korisnik is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/budzeti/korisnik/{id}": {
+            "get": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Pregled budžeta za određenog korisnika",
+                "description": "Vraća listu svih budžeta koji pripadaju prosleđenom ID-ju korisnika.",
+                "operationId": "getBudzetiByUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika čije budžete tražimo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitani budžeti korisnika",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "naziv": {
+                                                "type": "string",
+                                                "example": "Budžet za hranu"
+                                            },
+                                            "iznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 500
+                                            },
+                                            "potroseno": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 120.5
+                                            },
+                                            "idKorisnik": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "kategorija_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2026-06-18T12:00:00.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/budzeti/{id}": {
+            "get": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Prikaz detalja pojedinačnog budžeta",
+                "description": "Vraća sve podatke o jednom budžetu na osnovu njegovog ID-ja.",
+                "operationId": "getBudzetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID budžeta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno pronađen budžet",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "mesec": {
+                                            "type": "integer",
+                                            "example": 6
+                                        },
+                                        "godina": {
+                                            "type": "integer",
+                                            "example": 2026
+                                        },
+                                        "limit": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 60000
+                                        },
+                                        "potroseno": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 12050
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T12:00:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Budžet nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Ažuriranje postojećeg budžeta",
+                "description": "Omogućava delimičnu ili potpunu izmenu podataka o budžetu (mesec, godina, limit, potrošeno) na osnovu njegovog ID-ja.",
+                "operationId": "updateBudzet",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID budžeta koji se ažurira",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za izmenu budžeta (šalju se samo polja koja želiš da promeniš)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "mesec": {
+                                        "type": "integer",
+                                        "example": 7,
+                                        "maximum": 12,
+                                        "minimum": 1
+                                    },
+                                    "godina": {
+                                        "type": "integer",
+                                        "example": 2026
+                                    },
+                                    "limit": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 65000,
+                                        "minimum": 0
+                                    },
+                                    "potroseno": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1500,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Budžet uspešno ažuriran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "mesec": {
+                                            "type": "integer",
+                                            "example": 7
+                                        },
+                                        "godina": {
+                                            "type": "integer",
+                                            "example": 2026
+                                        },
+                                        "limit": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 65000
+                                        },
+                                        "potroseno": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1500
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T19:00:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "mesec": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The mesec must be between 1 and 12."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Budžet nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Budžeti"
+                ],
+                "summary": "Brisanje budžeta",
+                "description": "Trajno uklanja budžet iz sistema na osnovu njegovog ID-ja.",
+                "operationId": "deleteBudzet",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID budžeta koji se briše",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Budžet uspešno obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Budzet je obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Budžet nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/dokumenti": {
+            "get": {
+                "tags": [
+                    "Dokumenti"
+                ],
+                "summary": "Pregled svih dokumenata",
+                "description": "Vraća listu svih dokumenata koji su sačuvani u sistemu.",
+                "operationId": "getDokumentiIndex",
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitana lista dokumenata",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "naziv": {
+                                                "type": "string",
+                                                "example": "Racun_za_struju.pdf"
+                                            },
+                                            "putanja": {
+                                                "type": "string",
+                                                "example": "documents/2026/06/racun.pdf"
+                                            },
+                                            "tip": {
+                                                "type": "string",
+                                                "example": "pdf"
+                                            },
+                                            "idKorisnik": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2026-06-18T19:30:00.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Dokumenti"
+                ],
+                "summary": "Otpremanje novog dokumenta",
+                "description": "Omogućava slanje fajla (računa, izvoda, slika) i njegovo povezivanje sa određenom transakcijom.",
+                "operationId": "storeDokument",
+                "requestBody": {
+                    "description": "Podaci za dokument i fajl koji se kači",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "idTransakcija",
+                                    "nazivFajla",
+                                    "datumDodavanja",
+                                    "putanja"
+                                ],
+                                "properties": {
+                                    "idTransakcija": {
+                                        "description": "ID transakcije za koju se vezuje dokument",
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "nazivFajla": {
+                                        "description": "Naziv pod kojim će se fajl voditi",
+                                        "type": "string",
+                                        "example": "mesecni_racun_za_infostan"
+                                    },
+                                    "datumDodavanja": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-18"
+                                    },
+                                    "putanja": {
+                                        "description": "Fajl koji se šalje (pdf, jpg, png, docx, xlsx, max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dokument uspešno sačuvan i fajl otpremljen",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idTransakcija": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "nazivFajla": {
+                                            "type": "string",
+                                            "example": "mesecni_racun_za_infostan"
+                                        },
+                                        "putanja": {
+                                            "type": "string",
+                                            "example": "documents/AbCdEf12345.pdf"
+                                        },
+                                        "tip": {
+                                            "type": "string",
+                                            "example": "pdf"
+                                        },
+                                        "datumDodavanja": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-06-18"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T19:55:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla (npr. prevelik fajl ili pogrešan format)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "putanja": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The putanja must be a file of type: jpg, jpeg, png, pdf, docx, xlsx."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/dokumenti/{id}": {
+            "get": {
+                "tags": [
+                    "Dokumenti"
+                ],
+                "summary": "Prikaz detalja pojedinačnog dokumenta",
+                "description": "Vraća metapodatke o dokumentu (naziv, putanju na serveru, tip) na osnovu njegovog ID-ja.",
+                "operationId": "getDokumentById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID dokumenta",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno pronađen dokument",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idTransakcija": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "nazivFajla": {
+                                            "type": "string",
+                                            "example": "mesecni_racun_za_infostan"
+                                        },
+                                        "putanja": {
+                                            "type": "string",
+                                            "example": "documents/AbCdEf12345.pdf"
+                                        },
+                                        "tip": {
+                                            "type": "string",
+                                            "example": "pdf"
+                                        },
+                                        "datumDodavanja": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-06-18"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T19:55:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Dokument nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Dokumenti"
+                ],
+                "summary": "Ažuriranje metapodataka dokumenta",
+                "description": "Omogućava izmenu detalja o dokumentu (naziv, datum dodavanja ili tekstualna putanja) na osnovu njegovog ID-ja.",
+                "operationId": "updateDokument",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID dokumenta koji se ažurira",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za izmenu dokumenta (šalju se samo polja koja želiš da promeniš)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "idTransakcija": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "nazivFajla": {
+                                        "type": "string",
+                                        "example": "novi_naziv_racuna"
+                                    },
+                                    "datumDodavanja": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-06-18"
+                                    },
+                                    "putanja": {
+                                        "type": "string",
+                                        "example": "documents/NoviSmer.pdf",
+                                        "nullable": true
+                                    },
+                                    "tip": {
+                                        "type": "string",
+                                        "example": "pdf",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dokument uspešno ažuriran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idTransakcija": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "nazivFajla": {
+                                            "type": "string",
+                                            "example": "novi_naziv_racuna"
+                                        },
+                                        "putanja": {
+                                            "type": "string",
+                                            "example": "documents/NoviSmer.pdf"
+                                        },
+                                        "tip": {
+                                            "type": "string",
+                                            "example": "pdf"
+                                        },
+                                        "datumDodavanja": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-06-18"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T20:10:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "idTransakcija": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The selected id transakcija is invalid."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Dokument nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Dokumenti"
+                ],
+                "summary": "Brisanje dokumenta",
+                "description": "Uklanja dokument iz sistema i baze podataka na osnovu njegovog ID-ja.",
+                "operationId": "deleteDokument",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID dokumenta koji se briše",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dokument uspešno obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Dokument je obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Dokument nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/finansijski-ciljevi": {
+            "get": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Pregled svih finansijskih ciljeva",
+                "description": "Vraća listu svih finansijskih ciljeva kreiranih u sistemu.",
+                "operationId": "getFinansijskiCiljeviIndex",
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitana lista finansijskih ciljeva",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "naziv": {
+                                                "type": "string",
+                                                "example": "Kupovina automobila"
+                                            },
+                                            "ciljaniIznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 5000
+                                            },
+                                            "trenutniIznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 1200.5
+                                            },
+                                            "rok": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-12-31"
+                                            },
+                                            "idKorisnik": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2026-06-18T20:00:00.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Kreiranje novog finansijskog cilja",
+                "description": "Omogućava postavljanje novog finansijskog cilja (npr. štednja za auto, letovanje) sa ciljanim iznosom, trenutnim stanjem i rokom.",
+                "operationId": "createFinansijskiCilj",
+                "requestBody": {
+                    "description": "Podaci za kreiranje novog finansijskog cilja",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idKorisnik",
+                                    "naziv",
+                                    "ciljni_iznos",
+                                    "trenutni_iznos",
+                                    "rok"
+                                ],
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "naziv": {
+                                        "type": "string",
+                                        "example": "Putovanje na Siciliju"
+                                    },
+                                    "ciljni_iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1500,
+                                        "minimum": 0
+                                    },
+                                    "trenutni_iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 200,
+                                        "minimum": 0
+                                    },
+                                    "rok": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-25"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Finansijski cilj uspešno kreiran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "naziv": {
+                                            "type": "string",
+                                            "example": "Putovanje na Siciliju"
+                                        },
+                                        "ciljni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1500
+                                        },
+                                        "trenutni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 200
+                                        },
+                                        "rok": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-07-25"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T20:05:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "ciljni_iznos": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The ciljni iznos field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/finansijski-ciljevi/korisnik/{id}": {
+            "get": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Pregled finansijskih ciljeva za određenog korisnika",
+                "description": "Vraća listu svih finansijskih ciljeva koji pripadaju prosleđenom ID-ju korisnika.",
+                "operationId": "getFinansijskiCiljeviByUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika čije finansijske ciljeve tražimo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno učitani ciljevi korisnika",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "naziv": {
+                                                "type": "string",
+                                                "example": "Letovanje"
+                                            },
+                                            "ciljaniIznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 1500
+                                            },
+                                            "trenutniIznos": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 600
+                                            },
+                                            "rok": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-07-20"
+                                            },
+                                            "idKorisnik": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2026-06-18T20:00:00.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Korisnik nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/finansijski-ciljevi/{id}": {
+            "get": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Prikaz detalja pojedinačnog finansijskog cilja",
+                "description": "Vraća sve podatke o jednom finansijskom cilju na osnovu njegovog jedinstvenog ID-ja.",
+                "operationId": "getFinansijskiCiljById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID finansijskog cilja",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uspešno pronađen finansijski cilj",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "naziv": {
+                                            "type": "string",
+                                            "example": "Putovanje na Siciliju"
+                                        },
+                                        "ciljni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1500
+                                        },
+                                        "trenutni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 200
+                                        },
+                                        "rok": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-07-25"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T20:05:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Finansijski cilj nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Ažuriranje postojećeg finansijskog cilja",
+                "description": "Omogućava delimičnu ili potpunu izmenu podataka o finansijskom cilju na osnovu njegovog ID-ja.",
+                "operationId": "updateFinansijskiCilj",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID finansijskog cilja koji se ažurira",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Podaci za izmenu finansijskog cilja (šalju se samo polja koja želiš da promeniš)",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "naziv": {
+                                        "type": "string",
+                                        "example": "Putovanje na Siciliju (Ažurirano)"
+                                    },
+                                    "ciljni_iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1800,
+                                        "minimum": 0
+                                    },
+                                    "trenutni_iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 450,
+                                        "minimum": 0
+                                    },
+                                    "rok": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-07-24"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Finansijski cilj uspešno ažuriran",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "idKorisnik": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "naziv": {
+                                            "type": "string",
+                                            "example": "Putovanje na Siciliju (Ažurirano)"
+                                        },
+                                        "ciljni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1800
+                                        },
+                                        "trenutni_iznos": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 450
+                                        },
+                                        "rok": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2026-07-24"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2026-06-18T20:15:00.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validacija nije prosla"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "rok": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The rok must be a valid date."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Finansijski cilj nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Finansijski Ciljevi"
+                ],
+                "summary": "Brisanje finansijskog cilja",
+                "description": "Trajno uklanja finansijski cilj iz sistema na osnovu njegovog ID-ja.",
+                "operationId": "deleteFinansijskiCilj",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Jedinstveni ID finansijskog cilja koji se briše",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Finansijski cilj uspešno obrisan",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Finansijski cilj je obrisan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Neautorizovan pristup"
+                    },
+                    "404": {
+                        "description": "Finansijski cilj nije pronađen"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/password/forgot": {
+            "post": {
+                "tags": [
+                    "Autentifikacija"
+                ],
+                "summary": "Slanje linka za resetovanje lozinke",
+                "description": "Prima email adresu korisnika, generiše privremeni token za resetovanje i šalje e-mail sa jedinstvenim linkom (npr. preko Mailtrap-a).",
+                "operationId": "authSendResetLink",
+                "requestBody": {
+                    "description": "Email adresa korisnika koji je zaboravio lozinku",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "korisnik@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Zahtev je uspešno obrađen i e-mail je poslat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Poslat link za resetovanje lozinke na email adresu ako postoji u sistemu"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla (loš format email adrese)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Neuspesna validacija email adrese"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The email field must be a valid email address."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Korisnik sa tim email-om ne postoji u bazi podataka",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Korisnik sa datom email adresom ne postoji"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/password/reset": {
+            "post": {
+                "tags": [
+                    "Autentifikacija"
+                ],
+                "summary": "Resetovanje lozinke pomoću tokena",
+                "description": "Prima email, token koji je poslat na mejl, kao i novu lozinku (uz potvrdu lozinke). Proverava validnost i istek tokena (60 minuta), pa ažurira lozinku u bazi podataka.",
+                "operationId": "authResetPassword",
+                "requestBody": {
+                    "description": "Podaci za resetovanje lozinke",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "token",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "korisnik@example.com"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "a1b2c3d4e5f6..."
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "NovaLozinka123",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "NovaLozinka123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lozinka je uspešno promenjena",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Lozinka uspesno resetovana"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Token nije validan ili je istekao",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Token za resetovanje lozinke je istekao. Posaljite novi zahtev za resetovanje lozinke."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla (npr. lozinke se ne poklapaju ili su prekratke)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Neuspesna validacija"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "password": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The password confirmation does not match."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Kombinacija email-a i tokena nije pronađena u evidenciji",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Neispravan token ili email"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kategorije": {
+            "get": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Pregled svih kategorija",
+                "description": "Display a listing of the resource.",
+                "operationId": "fc83af8d9a44234e8a7d105d44641253",
+                "responses": {
+                    "200": {
+                        "description": "Lista svih kategorija"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Kreiranje nove kategorije",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "094b8726510ed775aa394db30f2e8bc9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idKorisnik",
+                                    "naziv"
+                                ],
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "naziv": {
+                                        "type": "string",
+                                        "example": "Hrana"
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Troškovi za namirnice"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kategorija uspešno kreirana"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            }
+        },
+        "/api/kategorije/korisnik/{id}": {
+            "get": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Pregled kategorija određenog korisnika",
+                "operationId": "3b4ebf7c9331e5986dac498e99571d69",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista kategorija korisnika"
+                    }
+                }
+            }
+        },
+        "/api/kategorije/{id}": {
+            "get": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Prikaz detalja određene kategorije",
+                "description": "Display the specified resource.",
+                "operationId": "e011e8fa4134b5fb477d57f86d1830e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategorije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalji kategorije"
+                    },
+                    "404": {
+                        "description": "Kategorija nije pronađena"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Ažuriranje postojeće kategorije",
+                "description": "Update the specified resource in storage.",
+                "operationId": "98f9e4df7ecf31f4b59b543e1a08c2d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategorije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "naziv": {
+                                        "type": "string",
+                                        "example": "Novi naziv kategorije"
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Novi opis kategorije"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Kategorija uspešno ažurirana"
+                    },
+                    "404": {
+                        "description": "Kategorija nije pronađena"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Kategorije"
+                ],
+                "summary": "Brisanje kategorije",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "0f80e3546f0728d9505c0a7b935c5fbc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID kategorije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kategorija je obrisana"
+                    },
+                    "404": {
+                        "description": "Kategorija nije pronađena"
+                    }
+                }
+            }
+        },
+        "/api/podsetnici": {
+            "get": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Pregled svih podsetnika",
+                "description": "Display a listing of the resource.",
+                "operationId": "fb5d2c15cc2755e0ade3f3fe9194312c",
+                "responses": {
+                    "200": {
+                        "description": "Lista svih podsetnika"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Kreiranje novog podsetnika",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "3ded20b0a0ed5bd7d45a5dd61afdd958",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idKorisnik",
+                                    "datum_vreme",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Platiti struju"
+                                    },
+                                    "datum_vreme": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-20 10:00:00"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Podsetnik uspešno kreiran"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            }
+        },
+        "/api/podsetnici/korisnik/{id}": {
+            "get": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Pregled podsetnika određenog korisnika",
+                "operationId": "44e3b6af9f25c181bf78077ba515608f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista podsetnika korisnika"
+                    }
+                }
+            }
+        },
+        "/api/podsetnici/{id}": {
+            "get": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Prikaz detalja određenog podsetnika",
+                "description": "Display the specified resource.",
+                "operationId": "e7753a6b98ff1e821e583eaec3d5a041",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID podsetnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalji podsetnika"
+                    },
+                    "404": {
+                        "description": "Podsetnik nije pronađen"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Ažuriranje postojećeg podsetnika",
+                "description": "Update the specified resource in storage.",
+                "operationId": "1bdc85e44dfeef728f6a0dc3642a8f96",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID podsetnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Promenjen opis podsetnika"
+                                    },
+                                    "datum_vreme": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-25 12:00:00"
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Podsetnik uspešno ažuriran"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Podsetnici"
+                ],
+                "summary": "Brisanje podsetnika",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "5bc195ac857ed7aa6f8b3f672cb3001b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID podsetnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Podsetnik je obrisan"
+                    },
+                    "404": {
+                        "description": "Podsetnik nije pronađen"
+                    }
+                }
+            }
+        },
+        "/api/transakcije": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled svih transakcija",
+                "description": "Display a listing of the resource.",
+                "operationId": "c94d62e8295ed706471ebfd20e47fd24",
+                "responses": {
+                    "200": {
+                        "description": "Lista svih transakcija"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Kreiranje nove transakcije",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "c522397d77a6d4e37dddeb64f28c2a1c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "idKorisnik",
+                                    "idKategorija",
+                                    "iznos",
+                                    "datum_vreme",
+                                    "tipTransakcije",
+                                    "valuta"
+                                ],
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "idKategorija": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1500.5
+                                    },
+                                    "datum_vreme": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-18 20:00:00"
+                                    },
+                                    "tipTransakcije": {
+                                        "type": "string",
+                                        "example": "RASHOD",
+                                        "enum": [
+                                            "PRIHOD",
+                                            "RASHOD"
+                                        ]
+                                    },
+                                    "valuta": {
+                                        "type": "string",
+                                        "example": "RSD"
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Kupovina namirnica"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transakcija uspešno kreirana"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            }
+        },
+        "/api/transakcije/korisnik/{id}": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled transakcija određenog korisnika",
+                "operationId": "9422c41b4ea2816bf5d9011a34e53275",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista transakcija korisnika"
+                    }
+                }
+            }
+        },
+        "/api/transakcije/korisnik/{idKorisnik}/kategorija/{idKategorija}": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled transakcija korisnika za određenu kategoriju",
+                "operationId": "7f53169e15d6ee23873e1ce47202c715",
+                "parameters": [
+                    {
+                        "name": "idKorisnik",
+                        "in": "path",
+                        "description": "ID korisnika",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "idKategorija",
+                        "in": "path",
+                        "description": "ID kategorije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista transakcija za zadatu kategoriju"
+                    }
+                }
+            }
+        },
+        "/api/transakcije/{id}": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Prikaz detalja određene transakcije",
+                "description": "Display the specified resource.",
+                "operationId": "b1962ef39147f5ab12be4362993e61d2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID transakcije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalji transakcije"
+                    },
+                    "404": {
+                        "description": "Transakcija nije pronađena"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Ažuriranje postojeće transakcije",
+                "description": "Update the specified resource in storage.",
+                "operationId": "3b3a5ffad26bdbdf1a09fa0234a697b3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID transakcije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "idKorisnik": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "idKategorija": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2000
+                                    },
+                                    "datum_vreme": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-18 20:30:00"
+                                    },
+                                    "tipTransakcije": {
+                                        "type": "string",
+                                        "example": "RASHOD",
+                                        "enum": [
+                                            "PRIHOD",
+                                            "RASHOD"
+                                        ]
+                                    },
+                                    "valuta": {
+                                        "type": "string",
+                                        "example": "RSD"
+                                    },
+                                    "opis": {
+                                        "type": "string",
+                                        "example": "Izmenjen opis"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transakcija uspešno ažurirana"
+                    },
+                    "422": {
+                        "description": "Validacija nije prošla"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Brisanje transakcije",
+                "description": "Remove the specified resource from storage.",
+                "operationId": "e23e9a6e94b6bd90c68e4e63bdee1b15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID transakcije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transakcija je obrisana"
+                    },
+                    "404": {
+                        "description": "Transakcija nije pronađena"
+                    }
+                }
+            }
+        },
+        "/api/transakcije/{id}/valuta": {
+            "patch": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Ažuriranje valute i iznosa transakcije",
+                "operationId": "b68a0e3da835c2344ee91e41b380391c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID transakcije",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "valuta",
+                                    "iznos"
+                                ],
+                                "properties": {
+                                    "valuta": {
+                                        "type": "string",
+                                        "example": "EUR"
+                                    },
+                                    "iznos": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 12.5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Valuta i iznos uspešno ažurirani"
+                    }
+                }
+            }
+        },
+        "/api/transakcije/pregled": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled svih transakcija ulogovanog korisnika",
+                "operationId": "2687c95ddfe8f0e5e6dc593040eedf8b",
+                "responses": {
+                    "200": {
+                        "description": "Lista transakcija ulogovanog korisnika"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/prihodi": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled svih prihoda ulogovanog korisnika",
+                "operationId": "886042b4119f8bb690991a9242ec1c7e",
+                "responses": {
+                    "200": {
+                        "description": "Lista prihoda ulogovanog korisnika"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/rashodi": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled svih rashoda ulogovanog korisnika",
+                "operationId": "b259e7d77ab153aac6b3ab5fdfe1628b",
+                "responses": {
+                    "200": {
+                        "description": "Lista rashoda ulogovanog korisnika"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/prihodi-paginacija": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled prihoda ulogovanog korisnika sa paginacijom",
+                "operationId": "bcf6e5ab06a8cd912368947f53eb938e",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Broj stavki po stranici",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginisana lista prihoda"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/rashodi-paginacija": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled rashoda ulogovanog korisnika sa paginacijom",
+                "operationId": "479a328beb466ed48a437f5c124f31f8",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Broj stavki po stranici",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginisana lista rashoda"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/prihodi-paginacija-filter": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled prihoda ulogovanog korisnika sa filterima i paginacijom",
+                "operationId": "59dd77beeb082dd414a49caf952888ea",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Broj stavki po stranici",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "idKategorija",
+                        "in": "query",
+                        "description": "Filtriranje po ID-u kategorije",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "datumOd",
+                        "in": "query",
+                        "description": "Datum početka pretrage (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "datumDo",
+                        "in": "query",
+                        "description": "Datum završetka pretrage (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filtrirana lista prihoda"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/rashodi-paginacija-filter": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Pregled rashoda ulogovanog korisnika sa filterima i paginacijom",
+                "operationId": "6a1bc8bd1da132c96868b9b33854c330",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Broj stavki po stranici",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "idKategorija",
+                        "in": "query",
+                        "description": "Filtriranje po ID-u kategorije",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "datumOd",
+                        "in": "query",
+                        "description": "Datum početka pretrage (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "datumDo",
+                        "in": "query",
+                        "description": "Datum završetka pretrage (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filtrirana lista rashoda"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/transakcije/export": {
+            "get": {
+                "tags": [
+                    "Transakcije"
+                ],
+                "summary": "Export transakcija u CSV formatu",
+                "operationId": "6d1083f4dcd52aec3c5bd7ae736d04ec",
+                "responses": {
+                    "200": {
+                        "description": "CSV fajl sa listom transakcija",
+                        "content": {
+                            "text/csv": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Admin Statistika",
+            "description": "Admin Statistika"
+        },
+        {
+            "name": "Admin Korisnici",
+            "description": "Admin Korisnici"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Budžeti",
+            "description": "Budžeti"
+        },
+        {
+            "name": "Dokumenti",
+            "description": "Dokumenti"
+        },
+        {
+            "name": "Finansijski Ciljevi",
+            "description": "Finansijski Ciljevi"
+        },
+        {
+            "name": "Autentifikacija",
+            "description": "Autentifikacija"
+        },
+        {
+            "name": "Kategorije",
+            "description": "Kategorije"
+        },
+        {
+            "name": "Podsetnici",
+            "description": "Podsetnici"
+        },
+        {
+            "name": "Transakcije",
+            "description": "Transakcije"
+        }
+    ]
+}
