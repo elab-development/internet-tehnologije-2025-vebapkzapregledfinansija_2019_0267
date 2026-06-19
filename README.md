@@ -8,6 +8,7 @@ Cilj aplikacije je da omogući korisnicima pregled i upravljanje ličnim finansi
 - **React (Node.js)** – frontend aplikacija
 - **MySQL** – baza podataka
 - **Docker Compose** – orkestracija servisa
+- **Railway** – cloud platforma za produkcionu bazu, frontend i backend deployment
 
 ## ⚙️ Instalacija
 Pre nego što pokreneš projekat, potrebno je da instaliraš:
@@ -35,6 +36,23 @@ Pre nego što pokreneš projekat, potrebno je da instaliraš:
      http://localhost:3000
 
 Odradjeno zbog Hotreloada, jer localhost preko nginx-a trazi rebuild svaki put kad se unese promena na frontendu. Zato svaki put kad se menja nesto na frontendu obavezno ponovo buildovati projekat nakon zavrsetka rada.
+
+## 🌐 Produkciono okruženje (Deployment)
+
+Aplikacija je uspešno hostovana na **Railway** platformi i podeljena je na tri nezavisna servisa koji komuniciraju u klaudu:
+
+- 🖥️ **Frontend (Production):** https://amused-balance-production-9d66.up.railway.app/
+- ⚙️ **Backend API:** https://internet-tehnologije-2025-vebapkzapregledfinansi-production.up.railway.app/api
+- 🗄️ **Baza podataka:** MySQL produkciona baza hostovana u okviru istog Railway projekta
+
+### 🔑 Produkciona podešavanja (Environment Variables)
+Za pokretanje u produkciji, na Railway platformi su konfigurisane sledeće ključne varijable:
+- `APP_ENV=production` & `APP_DEBUG=false` (za stabilnost i bezbednost Laravel-a)
+- `APP_KEY` (generisan unikatni kriptografski ključ)
+- `VIEW_COMPILED_PATH=/tmp` (eksplicitno podešena putanja za skladištenje kompajliranih Blade šablona unutar privremenog skladišta kontejnera)
+- `DB_CONNECTION=mysql` (konekcija usmerena na MySQL servis)
+- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (varijable koje bezbedno povezuju Laravel backend sa MySQL servisom koristeći Railway reference (`${{MySQL.*}}`))
+
 
 ## 🔑 Podešavanja
 - U .env fajlu za Laravel podesi:
