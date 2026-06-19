@@ -94,6 +94,19 @@ Za pokretanje u produkciji, na Railway platformi su konfigurisane sledeće klju�
 - Pregled statistike finansija
 - Seed podaci za testiranje (korisnici, kategorije, transakcije)
 
+##  API Dokumentacija (Swagger UI)
+Za lakše testiranje i pregled API endpointe-a, implementiran je Swagger UI. Dokumentacija se automatski generiše na osnovu anotacija u kontrolerima i omogućava interaktivno testiranje ruti direktno iz pregledača.
+
+Swagger UI je dostupan na adresi:
+http://localhost/api/api-documentation
+
+##  Autorizacija
+Kako bi pristupila zaštićenim rutama (poput unosa transakcija ili pregleda budžeta), potrebno je da se autorizuješ kroz Swagger interfejs:
+
+- Klikni na dugme "Authorize" u gornjem desnom uglu Swagger stranice.
+- Unesi svoj Bearer token (ili se uloguj kroz API da bi dobila token).
+- Nakon toga, svi zahtevi ka zaštićenim rutama će automatski sadržati potreban autorizacioni header.
+
 ## 🧪 Testiranje
 
 - Za pokretanje automatizovanih testova pokrenuti naredbu u terminalu:
